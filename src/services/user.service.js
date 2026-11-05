@@ -1,5 +1,6 @@
 import { userRepository } from "../repositories/user.repository.js";
-import { USER_ROLES } from "../utils/constants.js";
+import { USER_ROLES } from "../constants/user.constants.js";
+import { AppError } from "../utils/error.js";
 export const userService = {
     findAll: async () => {
         const users = await userRepository.findAll()
@@ -8,18 +9,14 @@ export const userService = {
     findById: async (id) => {
         const user = await userRepository.findById(id)
         if (!user) {
-            const error = new Error('Usuario no encontrado')
-            error.status = 404
-            throw error
+            throw new AppError("Usuario no encontrado",404)
         }
         return user
     },
     findByEmail:async (email) => {
         const user = await userRepository.findByEmail(email)
         if (!user) {
-            const error = new Error('Email no encontrado')
-            error.status = 404
-            throw error
+            throw new AppError("Email no encontrado",404)
         }
         return user
     },
@@ -29,26 +26,18 @@ export const userService = {
         const normalLastName = lastName?.trim()
         const normalEmail = email?.trim().toLowerCase()
         if(!normalFirstName || !normalLastName || !normalEmail || !password ){
-            const error = new Error('Faltan campos obligatorios');
-            error.status = 400;
-            throw error;
+            throw new AppError("Faltan campos obligatorios",400)
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(normalEmail)) {
-            const error = new Error("No es un formato email correcto")
-            error.status = 400
-            throw error
+            throw new AppError("No es un formato email correcto",400)
         }
         const exists = await userRepository.findByEmail(normalEmail)
         if(exists){
-            const error = new Error('Email ya existe')
-            error.status = 400
-            throw error
+            throw new AppError("Email no existe",400)
         }
         if (!Object.values(USER_ROLES).includes(role)) {
-            const error = new Error('Rol invalido')
-            error.status = 400
-            throw error
+            throw new AppError("Rol invalido",400)
         }
         return userRepository.create({
             firstName:normalFirstName,
@@ -61,18 +50,14 @@ export const userService = {
     update: async (id, updates) => {
         const user = await userRepository.update(id, updates)
         if (!user) {
-            const error = new Error('Usuario no encontrado')
-            error.status = 404
-            throw error
+            throw new AppError("Usuario no encontrado",404)
         }
         return user
     },
     delete: async (id) => {
         const user = await userRepository.delete(id)
         if (!user) {
-            const error = new Error('Usuario no encontrado')
-            error.status = 404
-            throw error
+            throw new AppError("Usuario no encontrado",404)
         }
         return user
     }
