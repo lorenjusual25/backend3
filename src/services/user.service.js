@@ -21,7 +21,7 @@ export const userService = {
         return user
     },
     create:async (user) => {
-        const { firstName, lastName, email, password, role = "user" } = user
+        const { firstName, lastName, email, password, role = "customer" } = user
         const normalFirstName = firstName?.trim()
         const normalLastName = lastName?.trim()
         const normalEmail = email?.trim().toLowerCase()
@@ -34,7 +34,7 @@ export const userService = {
         }
         const exists = await userRepository.findByEmail(normalEmail)
         if(exists){
-            throw new AppError("Email no existe",400)
+            throw new AppError("Email ya existe",400)
         }
         if (!Object.values(USER_ROLES).includes(role)) {
             throw new AppError("Rol invalido",400)

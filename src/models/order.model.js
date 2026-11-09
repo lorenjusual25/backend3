@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ORDER_STATUS } from "../constants/order.constants.js";
+import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
 const orderItemSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -25,9 +26,9 @@ const orderSchema = new mongoose.Schema({
         ref:'User',
         required:[true,'El cliente es obligatorio']
     },
-    deliver: {
+    delivery: {
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:'Delivery',
         default:null
     },
     items: {

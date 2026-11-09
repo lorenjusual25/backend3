@@ -9,6 +9,9 @@ export const userRepository = {
     findByEmail:(email) => {
         return User.findOne({email})
     },
+    findByRole: (role) => {
+        return User.find({role})
+    },
     create:(user) => {
         return User.create(user)
     },
@@ -17,5 +20,8 @@ export const userRepository = {
     },
     delete: (id) => {
         return User.findByIdAndDelete(id)
+    },
+    insertMany: (users) => {
+        return User.insertMany(users)
     }
 }

@@ -28,9 +28,13 @@ const deliverySchema = new mongoose.Schema({
   deliveredAt: {
     type: Date,
     default: null
+  },
+  canceledAt: {
+    type: Date,
+    default: null
   }
 }, {
-    timestamps: true
+  timestamps: true
 })
 const Delivery = mongoose.model('Delivery', deliverySchema)
 export default Delivery

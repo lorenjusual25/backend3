@@ -1,44 +1,44 @@
 import { userService } from "../services/user.service.js";
-export async function findAllUsers (req,res) {
+export async function findAllUsers (req,res,next) {
     try {
         const users = await userService.findAll()
-        res.json(users)
+        res.json({ status: 'ok', payload:users })
     }
     catch (err) {
-        res.status(500).send("Error del servidor")
+        next(err)
     }
 }
-export async function findUserById (req,res) {
+export async function findUserById (req,res,next) {
     try {
         const user = await userService.findById(req.params.id)
-        res.json(user)
+        res.json({ status: 'ok', payload: user })
     }
     catch (err) {
-        res.status(500).send("Error del servidor")
+        next(err)
     }
 }
-export async function createUser (req,res) {
+export async function createUser (req,res,next) {
     try {
         const user = await userService.create(req.body)
-        res.json(user)
+        res.json({ status: 'ok', payload: user })
     }
     catch (err) {
-        res.status(500).send("Error del servidor")
+        next(err)
     }
 }
-export async function updateUser(req, res)  {
+export async function updateUser(req, res,next)  {
     try {
         const user = await userService.update(req.params.id, req.body)
-        res.json(user)
+        res.json({ status: 'ok', payload: user })
     } catch (err) {
-        res.status(500).send("Error del servidor")
+        next(err)
     }
 }
-export async function deleteUser (req, res) {
+export async function deleteUser (req, res,next) {
     try {
         const user = await userService.delete(req.params.id)
-        res.json(user)
+        res.json({ status: 'ok', payload: user })
     } catch (err) {
-        res.status(500).send("Error del servidor")
+        next(err)
     }
 }
