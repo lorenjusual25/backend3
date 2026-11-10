@@ -16,12 +16,12 @@ export const deliveryService = {
         return delivery
     },
     create: async (delivery) => {
-        const order = await orderRepository.findById(delivery.orderId)
+        const order = await orderRepository.findById(delivery.order)
         if (!order) {
             throw new AppError("Order no proporcionada", 400)
         }
         if (delivery.driver) {
-            const driver = await userRepository.findById(delivery.driver.id)
+            const driver = await userRepository.findById(delivery.driver)
             if (!driver) {
                 throw new AppError("El usuario proporcionado no existe", 400)
             }
