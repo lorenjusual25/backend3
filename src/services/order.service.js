@@ -1,7 +1,7 @@
 import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { AppError } from "../utils/error.js"
-function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
+export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
             return declaredValue * 0.05

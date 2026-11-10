@@ -9,6 +9,7 @@ import { USER_ROLES } from "../constants/user.constants.js";
 import { deliveryRepository } from "../repositories/delivery.repository.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ORDER_STATUS } from "../constants/order.constants.js";
+import { calculateShippingCost } from "./order.service.js";
 const orderStatusByDelivery = {
     [DELIVERY_STATUS.PENDING]: ORDER_STATUS.CREATED,
     [DELIVERY_STATUS.ASSIGNED]: ORDER_STATUS.ASSIGNED,
@@ -51,7 +52,18 @@ export const mockService = {
             if (customers.length === 0) {
                 throw new AppError("No hay clientes para crear ordenes",400)
             }
-            const createdOrders = await orderRepository.insertMany(generateMockOrders(validateMockCant(orders),customers.map(c => c._id)))
+            const mocks = generateMockOrders(validateMockCant(orders),customers.map(c => c._id))
+            const ordersToInsert = mocks.map(order => {
+                const declaredValue = order.declaredValue || order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+                const shippingCost = calculateShippingCost(declaredValue, order.priority)
+                return {
+                    ...order,
+                    declaredValue,
+                    shippingCost,
+                    total: declaredValue + shippingCost
+                }
+            })
+            const createdOrders = await orderRepository.insertMany(ordersToInsert)
             result.orders = createdOrders.length
         }
         if (deliveries > 0) {
