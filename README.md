@@ -90,3 +90,24 @@ La respuesta indica cuántos registros se insertaron:
 
 Los pedidos insertados por el seed no pasan por el servicio de pedidos; sus
 campos de importes conservan los valores por defecto del modelo.
+
+## Manejo de errores y respuesta correcta
+
+Los errores se centralizan en un middleware global. Los servicios lanzan errores
+del dominio y el middleware los convierte en respuestas JSON:
+
+```json
+{
+  "status": "error",
+  "message": "Cantidad de mocks inválida"
+}
+```
+
+En caso de una respuesta correcta:
+```json
+{
+  "status":"success",
+  "message":"Lista de usuarios",
+  "payload":[]
+}
+```
