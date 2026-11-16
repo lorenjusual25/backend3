@@ -1,6 +1,7 @@
 import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { AppError } from "../utils/error.js"
+import { ERROR_CODES } from "../utils/errorDictionary.js";
 export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
@@ -18,16 +19,16 @@ export const orderService = {
     findById: (id) => {
         const order = orderRepository.findById(id)
         if (!order) {
-            throw new AppError("Orden no encontrada", 404)
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
     },
     create: (order) => {
         if (!order.customer) {
-            throw new AppError("El cliente no existe o no es válido", 400)
+            throw new AppError(ERROR_CODES.USER_NOT_FOUND)
         }
         if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {
-            throw new AppError("La orden debe tener al menos un item", 400)
+            throw new AppError(ERROR_CODES.ORDER_LENGTH_INVALID)
         }
         const itemsTotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
         const declaredValue = order.declaredValue || itemsTotal
@@ -50,14 +51,14 @@ export const orderService = {
         }
         const order = orderRepository.update(id, updates)
         if (!order) {
-            throw new AppError("Orden no encontrada", 404)
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
     },
     delete: (id) => {
         const order = orderRepository.delete(id)
         if (!order) {
-            throw new AppError("Orden no encontrada", 404)
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
     }

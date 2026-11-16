@@ -4,6 +4,7 @@ import { userRepository } from "../repositories/user.repository.js";
 import { AppError } from "../utils/error.js";
 import { USER_ROLES } from "../constants/user.constants.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
+import { ERROR_CODES } from "../utils/errorDictionary.js";
 export const deliveryService = {
     findAll: () => {
         return deliveryRepository.findAll()
@@ -11,22 +12,22 @@ export const deliveryService = {
     findById: (id) => {
         const delivery = deliveryRepository.findById(id)
         if (!delivery) {
-            throw new AppError("Delivery no encontrado",404)
+            throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
         return delivery
     },
     create: async (delivery) => {
         const order = await orderRepository.findById(delivery.order)
         if (!order) {
-            throw new AppError("Order no proporcionada", 400)
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         if (delivery.driver) {
             const driver = await userRepository.findById(delivery.driver)
             if (!driver) {
-                throw new AppError("El usuario proporcionado no existe", 400)
+                throw new AppError(ERROR_CODES.USER_NOT_FOUND)
             }
             if (driver.role !== USER_ROLES.DRIVER) {
-                throw new AppError("El usuario proporcionado no es un conductor", 400)
+                throw new AppError(ERROR_CODES.USER_NOT_DRIVER)
             }
             delivery.status = DELIVERY_STATUS.ASSIGNED
             delivery.assignedAt = new Date()
@@ -47,14 +48,14 @@ export const deliveryService = {
         }
         const delivery = deliveryRepository.update(id, updates)
         if (!delivery) {
-            throw new AppError("Delivery no encontrado", 404)
+            throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
         return delivery
     },
     delete: (id) => {
         const delivery = deliveryRepository.findById(id)
         if (!delivery) {
-            throw new AppError("Delivery no encontrado", 404)
+            throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
         return deliveryRepository.delete(id)
     }

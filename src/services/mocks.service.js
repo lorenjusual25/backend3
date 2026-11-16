@@ -10,6 +10,7 @@ import { deliveryRepository } from "../repositories/delivery.repository.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ORDER_STATUS } from "../constants/order.constants.js";
 import { calculateShippingCost } from "./order.service.js";
+import { ERROR_CODES } from "../utils/errorDictionary.js";
 const orderStatusByDelivery = {
     [DELIVERY_STATUS.PENDING]: ORDER_STATUS.CREATED,
     [DELIVERY_STATUS.ASSIGNED]: ORDER_STATUS.ASSIGNED,
@@ -19,10 +20,10 @@ const orderStatusByDelivery = {
 }
 function validateMockCant(cant = DEFAULT_MOCK_ITEMS) {
     if (!Number.isInteger(Number(cant)) || Number(cant) <= 0) {
-        throw new AppError("Cantidad de mocks invalida", 400)
+        throw new AppError(ERROR_CODES.INVALID_MOCK_QUANTITY)
     }
     if (Number(cant) > MAX_MOCK_ITEMS) {
-        throw new AppError("Maximo de mocks alcanzado", 400)
+        throw new AppError(ERROR_CODES.MAX_MOCK_REACHED)
     }
     return Number(cant)
 }
@@ -50,7 +51,7 @@ export const mockService = {
         if (orders > 0) {
             const customers = await userRepository.findByRole(USER_ROLES.CUSTOMER)
             if (customers.length === 0) {
-                throw new AppError("No hay clientes para crear ordenes",400)
+                throw new AppError(ERROR_CODES.MOCK_NOT_ENOUGH_CLIENTS)
             }
             const mocks = generateMockOrders(validateMockCant(orders),customers.map(c => c._id))
             const ordersToInsert = mocks.map(order => {
@@ -70,11 +71,11 @@ export const mockService = {
             const cant = validateMockCant(deliveries)
             const drivers = await userRepository.findByRole(USER_ROLES.DRIVER)
             if (drivers.length === 0) {
-                throw new AppError("No hay conductores para crear deliveries", 400)
+                throw new AppError(ERROR_CODES.MOCK_NOT_ENOUGH_DRIVERS)
             }
             const orders = await orderRepository.findWithoutDelivery(cant)
             if (orders.length < cant) {
-                throw new AppError("No hay suficientes pedidos sin entrega", 400)
+                throw new AppError(ERROR_CODES.MOCK_NOT_ENOUGH_ORDERS)
             }
             const driverIds = drivers.map(driver => driver._id)
             const mocks = generateMockDeliveries(orders, driverIds)

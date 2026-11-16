@@ -4,6 +4,8 @@ import userRouter from './routes/user.router.js'
 import mocksRouter from './routes/mocks.router.js'
 import deliveryRouter from './routes/delivery.router.js'
 import orderRouter from './routes/order.router.js'
+import { notFoundRoute } from './middlewares/notFoundRoute.js'
+import { errorHandler } from './middlewares/errorHandler.js'
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -15,16 +17,6 @@ app.use('/api/orders', orderRouter)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 })
-app.use((req, res) => {
-  res.status(404).send('Ruta no encontrada');
-})
-app.use((err, req, res, next) => {
-  if (err.name === 'ValidationError') {
-    const messages = Object.values(err.errors).map(e => e.message)
-    return res.status(400).json({ status: 'error', message: messages })
-  }
-  const statusCode = err.statusCode || 500
-  const message = err.statusCode ? err.message : 'Error interno del servidor'
-  res.status(statusCode).json({ status: 'error', message })
-})
+app.use(notFoundRoute)
+app.use(errorHandler)
 export default app
