@@ -13,17 +13,17 @@ export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORIT
     }
 }
 export const orderService = {
-    findAll: () => {
-        return orderRepository.findAll()
+    findAll: async () => {
+        return await orderRepository.findAll()
     },
-    findById: (id) => {
-        const order = orderRepository.findById(id)
+    findById: async (id) => {
+        const order = await orderRepository.findById(id)
         if (!order) {
             throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
     },
-    create: (order) => {
+    create: async (order) => {
         if (!order.customer) {
             throw new AppError(ERROR_CODES.USER_NOT_FOUND)
         }
@@ -34,14 +34,14 @@ export const orderService = {
         const declaredValue = order.declaredValue || itemsTotal
         const shippingCost = calculateShippingCost(declaredValue,order.priority)
         const total = declaredValue + shippingCost
-        return orderRepository.create({
+        return await orderRepository.create({
             ...order,
             declaredValue,
             shippingCost,
             total
         })
     },
-    update: (id, updates) => {
+    update: async (id, updates) => {
         if (updates.priority) {
             const declaredValue = updates.declaredValue || updates.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
             const shippingCost = calculateShippingCost(declaredValue, updates.priority)
@@ -49,14 +49,14 @@ export const orderService = {
             updates.shippingCost = shippingCost
             updates.total = declaredValue + shippingCost
         }
-        const order = orderRepository.update(id, updates)
+        const order = await orderRepository.update(id, updates)
         if (!order) {
             throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
     },
-    delete: (id) => {
-        const order = orderRepository.delete(id)
+    delete: async (id) => {
+        const order = await orderRepository.delete(id)
         if (!order) {
             throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }

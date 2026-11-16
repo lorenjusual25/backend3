@@ -6,11 +6,11 @@ import { USER_ROLES } from "../constants/user.constants.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
 export const deliveryService = {
-    findAll: () => {
-        return deliveryRepository.findAll()
+    findAll: async () => {
+        return await deliveryRepository.findAll()
     },
-    findById: (id) => {
-        const delivery = deliveryRepository.findById(id)
+    findById: async (id) => {
+        const delivery = await deliveryRepository.findById(id)
         if (!delivery) {
             throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
@@ -27,14 +27,14 @@ export const deliveryService = {
                 throw new AppError(ERROR_CODES.USER_NOT_FOUND)
             }
             if (driver.role !== USER_ROLES.DRIVER) {
-                throw new AppError(ERROR_CODES.USER_NOT_DRIVER)
+                throw new AppError(ERROR_CODES.NON_DRIVER_USER)
             }
             delivery.status = DELIVERY_STATUS.ASSIGNED
             delivery.assignedAt = new Date()
         }
         return deliveryRepository.create(delivery)
     },
-    update: (id, updates) => {
+    update: async (id, updates) => {
         if (updates.status) {
             if (updates.status === DELIVERY_STATUS.ASSIGNED) {
                 updates.assignedAt = new Date()
@@ -46,17 +46,17 @@ export const deliveryService = {
                 updates.canceledAt = new Date()
             }
         }
-        const delivery = deliveryRepository.update(id, updates)
+        const delivery = await deliveryRepository.update(id, updates)
         if (!delivery) {
             throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
         return delivery
     },
-    delete: (id) => {
-        const delivery = deliveryRepository.findById(id)
+    delete: async (id) => {
+        const delivery = await deliveryRepository.findById(id)
         if (!delivery) {
             throw new AppError(ERROR_CODES.DELIVERY_NOT_FOUND)
         }
-        return deliveryRepository.delete(id)
+        return await deliveryRepository.delete(id)
     }
 }

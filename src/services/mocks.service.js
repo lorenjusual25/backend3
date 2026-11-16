@@ -29,12 +29,15 @@ function validateMockCant(cant = DEFAULT_MOCK_ITEMS) {
 }
 export const mockService = {
     getMockUsers: (cant = DEFAULT_MOCK_ITEMS) => {
+        validateMockCant(cant)
         return generateMockUsers(cant)
     },
     getMockOrders: (cant = DEFAULT_MOCK_ITEMS, customerIds) => {
+        validateMockCant(cant)
         return generateMockOrders(cant,customerIds)
     },
     getMockDeliveries: (orders, driverIds) => {
+        validateMockCant(orders.length)
         return generateMockDeliveries(orders,driverIds)
     },
     seed: async(params = {}) => {
