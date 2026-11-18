@@ -7,6 +7,7 @@ import orderRouter from './routes/order.router.js'
 import storeRouter from './routes/store.router.js'
 import { notFoundRoute } from './middlewares/notFoundRoute.js'
 import { errorHandler } from './middlewares/errorHandler.js'
+import logger from './config/logger.js'
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -18,6 +19,15 @@ app.use('/api/orders', orderRouter)
 app.use('/api/stores', storeRouter)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+})
+app.get('/api/logger-test',(req,res) => {
+  logger.log('debug', 'Prueba de debug')
+  logger.log('http', 'Prueba de http')
+  logger.log('info', 'Prueba de info')
+  logger.log('warning', 'Prueba de warning')
+  logger.log('error', 'Prueba de error')
+  logger.log('fatal', 'Prueba de fatal')
+  res.json({ status: 'ok', message: 'Logs de prueba generados' })
 })
 app.use(notFoundRoute)
 app.use(errorHandler)

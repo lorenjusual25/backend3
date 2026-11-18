@@ -13,6 +13,7 @@ import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ORDER_STATUS } from "../constants/order.constants.js";
 import { calculateShippingCost } from "./order.service.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
+import logger from "../config/logger.js";
 const orderStatusByDelivery = {
     [DELIVERY_STATUS.PENDING]: ORDER_STATUS.CREATED,
     [DELIVERY_STATUS.ASSIGNED]: ORDER_STATUS.ASSIGNED,
@@ -105,6 +106,7 @@ export const mockService = {
             const createdStores = await storeRepository.insertMany(mocks)
             result.stores = createdStores.length
         }
+        logger.info("Se generaron correctamente los mocks")
         return {
             users: result.users,
             orders: result.orders,

@@ -2,10 +2,10 @@ import { AppError } from "../utils/error.js";
 import logger from "../config/logger.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
 export function errorHandler(err, req, res, next) {
-    const statusCode = err.statusCode || 500
+    const statusCode = err.name === "ValidationError"? 400: err.statusCode || 500
     const code = err.code || ERROR_CODES.INTERNAL_SERVER_ERROR
     const line = `${code} - ${err.message} - ${req.method} ${req.originalUrl}`
-    if(statusCode >=500){
+    if(statusCode >= 500){
         logger.error(line)
     }else{
         logger.warning(line)
@@ -19,6 +19,9 @@ export function errorHandler(err, req, res, next) {
             status: "error",
             message: err.message
         })
+    }
+    if (res.headersSent) {
+        return next(err)
     }
     return res.status(500).json({
         status: "error",

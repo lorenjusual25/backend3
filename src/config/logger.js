@@ -35,6 +35,12 @@ const logger = winston.createLogger({
                 logFormat
             )
         }),
+        new DailyRotateFile({
+            filename:"logs/error-%DATE%.log",
+            dateFormat:"YYYY-MM-DD-HH-mm-ss",
+            level: "error",
+            maxFiles:"14d"
+        })
     ]
 })
 export default logger

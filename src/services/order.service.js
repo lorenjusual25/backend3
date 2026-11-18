@@ -1,3 +1,4 @@
+import logger from "../config/logger.js";
 import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { AppError } from "../utils/error.js"
@@ -34,6 +35,7 @@ export const orderService = {
         const declaredValue = order.declaredValue || itemsTotal
         const shippingCost = calculateShippingCost(declaredValue,order.priority)
         const total = declaredValue + shippingCost
+        logger.info("Pedido creado correctamente")
         return await orderRepository.create({
             ...order,
             declaredValue,
@@ -51,6 +53,7 @@ export const orderService = {
         }
         const order = await orderRepository.update(id, updates)
         if (!order) {
+            logger.error("Pedido no encontrado")
             throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order

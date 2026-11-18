@@ -111,3 +111,15 @@ En caso de una respuesta correcta:
   "payload":[]
 }
 ```
+
+## Logging
+
+El proyecto usa la libreria Winston y winston-daily-rotate-file. Los niveles son `debug`,
+`http`, `info`, `warning`, `error` y `fatal`.
+Para probarlos, hay que iniciar el servidor y hacer un `GET http://localhost:8080/api/logger-test`.
+En desarrollo se ven los 6 niveles en la consola. Los niveles `error` y `fatal` se guardan en archivos rotativos 
+en `logs/error-<fecha>.log`, con una retencion de 14 días.
+En desarrollo la consola muestra desde `debug`; en producción el nivel se
+configura con `LOGGER_LEVEL` (por ejemplo, `info`). El filtro del archivo sigue
+siendo `error`.
+Git ignora `node_modules` y `.env`

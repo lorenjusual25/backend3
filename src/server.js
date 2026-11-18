@@ -10,8 +10,8 @@ const main = async () => {
             logger.info(`Servidor corriendo en puerto ${PORT}`)
         })
     } catch (error) {
-        logger.fatal(`Error al iniciar el servidor: ${error.message}`)
-        process.exit(1)
+        logger.fatal(`Error al iniciar el servidor: ${error.message}`,{error})
+        process.exitCode = 1
     }
 }
 main()
