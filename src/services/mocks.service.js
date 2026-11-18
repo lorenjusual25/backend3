@@ -1,12 +1,14 @@
 import { generateMockUsers } from "../mocks/user.mock.js";
 import { generateMockOrders } from "../mocks/order.mock.js";
 import { generateMockDeliveries } from "../mocks/delivery.mock.js";
+import { generateMockStores } from "../mocks/store.mock.js";
 import { DEFAULT_MOCK_ITEMS, MAX_MOCK_ITEMS} from "../constants/mocks.constants.js";   
 import { AppError } from "../utils/error.js";
 import { userRepository } from "../repositories/user.repository.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { USER_ROLES } from "../constants/user.constants.js";
 import { deliveryRepository } from "../repositories/delivery.repository.js";
+import { storeRepository } from "../repositories/store.repository.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ORDER_STATUS } from "../constants/order.constants.js";
 import { calculateShippingCost } from "./order.service.js";
@@ -41,11 +43,12 @@ export const mockService = {
         return generateMockDeliveries(orders,driverIds)
     },
     seed: async(params = {}) => {
-        const { users = 0, orders = 0, deliveries = 0 } = params
+        const { users = 0, orders = 0, deliveries = 0, stores = 0 } = params
         const result = {
             users:0,
             orders:0,
-            deliveries:0
+            deliveries:0,
+            stores:0
         }
         if (users > 0) {
             const createdUsers = await userRepository.insertMany(generateMockUsers(validateMockCant(users)))
@@ -91,10 +94,22 @@ export const mockService = {
             }
             result.deliveries = createdDeliveries.length
         }
+        if (stores > 0) {
+            const cant = validateMockCant(stores)
+            const owners = await userRepository.findByRole(USER_ROLES.STORE)
+            if (owners.length === 0) {
+                throw new AppError(ERROR_CODES.MOCK_NOT_ENOUGH_STORE_OWNERS)
+            }
+            const ownerIds = owners.map(owner => owner._id)
+            const mocks = generateMockStores(cant, ownerIds)
+            const createdStores = await storeRepository.insertMany(mocks)
+            result.stores = createdStores.length
+        }
         return {
             users: result.users,
             orders: result.orders,
-            deliveries: result.deliveries
+            deliveries: result.deliveries,
+            stores: result.stores
         }
     }
 }

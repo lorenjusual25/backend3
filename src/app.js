@@ -4,6 +4,7 @@ import userRouter from './routes/user.router.js'
 import mocksRouter from './routes/mocks.router.js'
 import deliveryRouter from './routes/delivery.router.js'
 import orderRouter from './routes/order.router.js'
+import storeRouter from './routes/store.router.js'
 import { notFoundRoute } from './middlewares/notFoundRoute.js'
 import { errorHandler } from './middlewares/errorHandler.js'
 const app = express()
@@ -14,6 +15,7 @@ app.use('/api/users',userRouter)
 app.use('/api/mocks',mocksRouter)
 app.use('/api/deliveries', deliveryRouter)
 app.use('/api/orders', orderRouter)
+app.use('/api/stores', storeRouter)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 })
