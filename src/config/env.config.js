@@ -5,5 +5,6 @@ export const config = {
     nodeEnv: process.env.NODE_ENV || "development",
     isProd: process.env.NODE_ENV === "production",
     mongoDbUri: process.env.MONGO_URI,
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    loggerLevel: process.env.LOGGER_LEVEL
 }
