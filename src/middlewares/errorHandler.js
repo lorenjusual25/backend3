@@ -1,7 +1,14 @@
 import { AppError } from "../utils/error.js";
+import logger from "../config/logger.js";
+import { ERROR_CODES } from "../utils/errorDictionary.js";
 export function errorHandler(err, req, res, next) {
-    if (res.headersSent) {
-        return next(err)
+    const statusCode = err.statusCode || 500
+    const code = err.code || ERROR_CODES.INTERNAL_SERVER_ERROR
+    const line = `${code} - ${err.message} - ${req.method} ${req.originalUrl}`
+    if(statusCode >=500){
+        logger.error(line)
+    }else{
+        logger.warning(line)
     }
     if (err.name === "ValidationError") {
         const messages = Object.values(err.errors).map(error => error.message)

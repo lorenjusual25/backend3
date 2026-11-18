@@ -11,7 +11,7 @@ const customLevels = {
         debug: 5
     },
     colors: {
-        fatal: 'red',
+        fatal: 'magenta',
         error: 'red',
         warning: 'yellow',
         info: 'green',
