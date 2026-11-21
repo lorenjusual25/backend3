@@ -1,0 +1,422 @@
+tags:
+  - name: Users
+    description: Gestion de usuarios
+  - name: Orders
+    description: Gestion de pedidos
+  - name: Deliveries
+    description: Gestion de entregas
+  - name: Stores
+    description: Gestion de tiendas
+  - name: Mocks
+    description: Gestion de datos simulados
+paths: 
+  /api/users:
+    get:
+      tags: [Users]
+      summary: Obtener todos los usuarios
+      description: Obtener la lista completa de usuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+        '500':
+          description: Error interno del servidor
+  /api/users/{id}:
+    get:
+      tags: [Users]
+      summary: Obtener un usuario por ID
+      description: Obtener un usuario específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario obtenido exitosamente
+        '404':
+          description: Usuario no encontrado
+        '400':
+          description: El ID proporcionado no es válido
+        '500':
+          description: Error interno del servidor
+  /api/orders:
+    get:
+      tags: [Orders]
+      summary: Obtener todos los pedidos
+      description: Obtener la lista completa de pedidos
+      responses:
+        '200':
+          description: Lista de pedidos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersResponse'
+        '500':
+          description: Error interno del servidor
+    post:
+      tags: [Orders]
+      summary: Crear un nuevo pedido
+      description: Require cliente existente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: Pedido creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                usuarioNoEncontrado:
+                  summary: Usuario no encontrado en la solicitud
+                  value:
+                    status: error
+                    message: El usuario proporcionado no existe
+                    code: USER_NOT_FOUND
+                itemsInvalidos:
+                  summary: Items inválidos en la solicitud
+                  value:
+                    status: error
+                    message: Los items proporcionados no son válidos
+                    code: ORDER_LENGTH_INVALID
+        '500':
+          description: Error interno del servidor
+  /api/orders/{id}:
+    get:
+      tags: [Orders]
+      summary: Obtener un pedido por ID
+      description: Obtener un pedido específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del pedido a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pedido obtenido exitosamente
+        '404':
+          description: Pedido no encontrado
+        '400':
+          description: Error de validación de id
+        '500':
+          description: Error interno del servidor
+    put:
+      tags: [Orders]
+      summary: Actualizar un pedido por ID
+      description: Actualizar un pedido específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del pedido a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+      responses:
+        '200':
+          description: Pedido actualizado exitosamente
+        '400':
+          description: Error de validación de id
+        '404':
+          description: Pedido no encontrado
+        '500':
+          description: Error interno del servidor
+    delete:
+      tags: [Orders]
+      summary: Eliminar un pedido por ID
+      description: Eliminar un pedido específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del pedido a eliminar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pedido eliminado exitosamente
+        '404':
+          description: Pedido no encontrado
+        '400':
+          description: Error de validación de id
+        '500':
+          description: Error interno del servidor
+components:
+  schemas:
+    User:
+      type: object
+      required: [_id, firstName, lastName, email, role]
+      properties:
+        _id:
+          type: string
+          example: 6af1795f5f3e9d65352dd81e
+        firstName:
+          type: string
+          example: Ana
+        lastName:
+          type: string
+          example: Gomez
+        email:
+          type: string
+          example: ana@example.com
+        password:
+          type: string
+          example: clave-de-prueba
+        role:
+          type: string
+          enum: [admin, customer, driver, store]
+          example: customer
+        documents:
+          type: array
+          items: {}
+          example: []
+    OrderItem:
+      type: object
+      required: [productId, quantity, price]
+      properties:
+        productId:
+          type: string
+          example: Caja mediana
+        quantity:
+          type: integer
+          example: 2
+        price:
+          type: number
+          format: float
+          example: 19.99
+    Customer:
+      type: object
+      required: [_id, firstName, lastName, email, role]
+      properties:
+        _id:
+          type: string
+          example: 6af1797c5f3e9d65352dd82e
+        firstName:
+          type: string
+          example: Carlie
+        lastName:
+          type: string
+          example: Cronin
+        email:
+          type: string
+          example: carlie_cronin29.fr9nk@shipnow.test
+        password:
+          type: string
+          example: clave-de-prueba
+        role:
+          type: string
+          enum: [admin, customer, driver, store]
+          example: customer
+        documents:
+          type: array
+          items: {}
+          example: []
+      nullable: true
+      description: Usuario poblado por las consultas de pedidos. Puede ser null si el usuario fue eliminado.
+    Delivery:
+      type: object
+      required: [_id, firstName, lastName, email, role]
+      properties:
+        _id:
+          type: string
+          example: 6af1797c5f3e9d65352dd82f
+        order:
+          type: string
+          example: 6af1797c5f3e9d65352dd830
+        driver:
+          type: string
+          example: 6af1797c5f3e9d65352dd82f
+        status:
+          type: string
+          enum: [pending, assigned, in_transit, delivered, canceled]
+          example: pending
+        priority:
+          type: string
+          enum: [low, normal, high]
+          example: normal
+        assignedAt:
+          type: string
+          format: date-time
+          example: 2024-06-01T12:00:00Z
+        deliveredAt:
+          type: string
+          format: date-time
+          example: 2024-06-02T12:00:00Z
+        canceledAt:
+          type: string
+          format: date-time
+          example: 2024-06-03T12:00:00Z
+      nullable: true
+      description: Información de la entrega. Puede ser null si la entrega no ha sido asignada.
+    OrderRead:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6af1797c5f3e9d65352dd830
+        customer:
+          $ref: '#/components/schemas/Customer'
+        delivery:
+          $ref: '#/components/schemas/Delivery'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          example: []
+        deliveryAddress:
+          type: string
+          example: 123 Main St, Springfield, USA
+        status:
+          type: string
+          enum: [pending, assigned, in_transit, delivered, canceled]
+          example: pending
+        priority:
+          type: string
+          enum: [low, normal, high]
+          example: normal
+        assignedAt:
+          type: string
+          format: date-time
+          example: 2024-06-01T12:00:00Z
+        deliveredAt:
+          type: string
+          format: date-time
+          example: 2024-06-02T12:00:00Z
+        canceledAt:
+          type: string
+          format: date-time
+          example: 2024-06-03T12:00:00Z
+      nullable: true
+      description: Información del pedido. Puede ser null si el pedido no existe.
+    OrdersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Lista de pedidos
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderRead'
+    OrderInput:
+      type: object
+      properties:
+        customer:
+          type: string
+          description: ID del cliente que realiza el pedido.
+          example: 6af1797c5f3e9d65352dd82f
+        delivery:
+          type: string
+          nullable: true
+          description: ID del delivery. Puede ser null si no se ha asignado un delivery.
+          example: 6af1797c5f3e9d65352dd830
+          default: null
+        deliveryAddress:
+          type: string
+          description: Dirección de entrega del pedido. 
+          example: 123 Main St, Springfield, USA
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        status:
+          type: string
+          enum: [created, assigned, in_transit, delivered, canceled]
+          example: created
+          default: created
+        priority:
+          type: string
+          enum: [low, normal, high]
+          example: normal
+          default: normal
+      required: [customer, deliveryAddress, items]
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+        customer:
+          type: string
+        delivery:
+          type: string
+        deliveryAddress:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        status:
+          type: string
+        priority:
+          type: string
+        total:
+          type: number
+        shipppingCost:
+          type: number
+        declaredValue:
+          type: number
+    OrderResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Pedido creado  
+        payload:
+          $ref: '#/components/schemas/Order'
+    OrderUpdate:
+      type: object
+      properties:
+        deliveryAddress:
+          type: string
+          example: "Calle Nueva 123"
+        status:
+          type: string
+          enum: [created, assigned, in_transit, delivered, canceled]
+        priority:
+          type: string
+          enum: [low, normal, high]
+        declaredValue:
+          type: number
+          example: 100
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Pedido no encontrado
+        code:
+          type: string
+          example: ORDER_NOT_FOUND
+

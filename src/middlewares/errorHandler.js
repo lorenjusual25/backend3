@@ -14,6 +14,9 @@ export function errorHandler(err, req, res, next) {
         const messages = Object.values(err.errors).map(error => error.message)
         return res.status(400).json({ status: "error", message: messages })
     }
+    if (err.name === "CastError" && err.path === "_id") {
+        err = new AppError(ERROR_CODES.ID_ERROR);
+    }
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             status: "error",

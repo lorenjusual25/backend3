@@ -17,7 +17,8 @@ export const ERROR_CODES = {
     INVALID_MOCK_QUANTITY: 'INVALID_MOCK_QUANTITY',
     MAX_MOCK_REACHED: 'MAX_MOCK_REACHED',
     MOCK_NOT_ENOUGH_STORE_OWNERS: 'MOCK_NOT_ENOUGH_STORE_OWNERS',
-    STORE_NOT_FOUND: 'STORE_NOT_FOUND'
+    STORE_NOT_FOUND: 'STORE_NOT_FOUND',
+    ID_ERROR: 'ID_ERROR'
 }
 export const ERROR_DICTIONARY = {
     "INTERNAL_SERVER_ERROR": {
@@ -95,5 +96,9 @@ export const ERROR_DICTIONARY = {
     "STORE_NOT_FOUND": {
         statusCode: 404,
         message: 'Store no encontrada'
+    },
+    "ID_ERROR": {
+        statusCode: 400,
+        message: 'ID inválido'
     }
 }
