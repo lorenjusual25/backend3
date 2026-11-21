@@ -18,6 +18,59 @@ paths:
       responses:
         '200':
           description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+        '500':
+          description: Error interno del servidor
+    post:
+      tags: [Users]
+      summary: Crear un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Datos del usuario inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                camposFaltantes:
+                  summary: Faltan campos requeridos
+                  value:
+                    status: error
+                    message: Faltan campos requeridos
+                    code: MISSING_FIELDS
+                emailInvalido:
+                  summary: Formato de email inválido
+                  value:
+                    status: error
+                    message: Formato de correo electrónico inválido
+                    code: INVALID_EMAIL
+                emailExistente:
+                  summary: Email ya registrado
+                  value:
+                    status: error
+                    message: El correo electrónico ya está en uso
+                    code: EMAIL_ALREADY_EXISTS
+                rolInvalido:
+                  summary: Rol inválido
+                  value:
+                    status: error
+                    message: Rol inválido
+                    code: INVALID_ROLE
         '500':
           description: Error interno del servidor
   /api/users/{id}:
@@ -35,10 +88,66 @@ paths:
       responses:
         '200':
           description: Usuario obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
         '404':
           description: Usuario no encontrado
         '400':
           description: El ID proporcionado no es válido
+        '500':
+          description: Error interno del servidor
+    put:
+      tags: [Users]
+      summary: Actualizar un usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: El ID proporcionado no es válido
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
+    delete:
+      tags: [Users]
+      summary: Eliminar un usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a eliminar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: El ID proporcionado no es válido
+        '404':
+          description: Usuario no encontrado
         '500':
           description: Error interno del servidor
   /api/orders:
@@ -53,7 +162,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrdersResponse'
-        '500':
+        '500':  
           description: Error interno del servidor
     post:
       tags: [Orders]
@@ -160,6 +269,8 @@ paths:
           description: Error de validación de id
         '500':
           description: Error interno del servidor
+  /api/deliveries:
+  /api/deliveries/{id}:
 components:
   schemas:
     User:
@@ -189,6 +300,79 @@ components:
           type: array
           items: {}
           example: []
+    UserInput:
+      type: object
+      required: [firstName, lastName, email, password]
+      properties:
+        firstName:
+          type: string
+          example: Ana
+        lastName:
+          type: string
+          example: Gomez
+        email:
+          type: string
+          format: email
+          example: ana@example.com
+        password:
+          type: string
+          example: clave-de-prueba
+        role:
+          type: string
+          enum: [admin, customer, driver, store]
+          default: customer
+    UserUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Ana
+        lastName:
+          type: string
+          example: Gomez
+        email:
+          type: string
+          format: email
+          example: ana@example.com
+        password:
+          type: string
+          example: clave-de-prueba
+        role:
+          type: string
+          enum: [admin, customer, driver, store]
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              reference:
+                type: string
+    UserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Usuario encontrado
+        payload:
+          $ref: '#/components/schemas/User'
+    UsersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Lista de usuarios
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     OrderItem:
       type: object
       required: [productId, quantity, price]
@@ -414,9 +598,12 @@ components:
           type: string
           example: error
         message:
-          type: string
-          example: Pedido no encontrado
-        code:
-          type: string
-          example: ORDER_NOT_FOUND
+          oneOf:
+            - type: string
+              example: Pedido no encontrado
+            - type: array
+              items:
+                type: string
+
+
 
