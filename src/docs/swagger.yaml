@@ -24,6 +24,17 @@ paths:
                 $ref: '#/components/schemas/UsersResponse'
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     post:
       tags: [Users]
       summary: Crear un nuevo usuario
@@ -52,27 +63,38 @@ paths:
                   value:
                     status: error
                     message: Faltan campos requeridos
-                    code: MISSING_FIELDS
+                    code: MISSING_REQUIRED_FIELDS
                 emailInvalido:
                   summary: Formato de email inválido
                   value:
                     status: error
                     message: Formato de correo electrónico inválido
-                    code: INVALID_EMAIL
+                    code: INVALID_EMAIL_FORMAT
                 emailExistente:
                   summary: Email ya registrado
                   value:
                     status: error
                     message: El correo electrónico ya está en uso
-                    code: EMAIL_ALREADY_EXISTS
+                    code: EMAIL_EXISTS
                 rolInvalido:
                   summary: Rol inválido
                   value:
                     status: error
                     message: Rol inválido
-                    code: INVALID_ROLE
+                    code: INVALID_USER_ROLE
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR    
   /api/users/{id}:
     get:
       tags: [Users]
@@ -94,10 +116,43 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '404':
           description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                usuarioNoEncontrado:
+                  summary: Usuario no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     put:
       tags: [Users]
       summary: Actualizar un usuario por ID
@@ -123,10 +178,43 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                usuarioNoEncontrado:
+                  summary: Usuario no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     delete:
       tags: [Users]
       summary: Eliminar un usuario por ID
@@ -146,10 +234,43 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                usuarioNoEncontrado:
+                  summary: Usuario no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
   /api/orders:
     get:
       tags: [Orders]
@@ -164,6 +285,17 @@ paths:
                 $ref: '#/components/schemas/OrdersResponse'
         '500':  
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     post:
       tags: [Orders]
       summary: Crear un nuevo pedido
@@ -202,6 +334,17 @@ paths:
                     code: ORDER_LENGTH_INVALID
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
   /api/orders/{id}:
     get:
       tags: [Orders]
@@ -217,12 +360,49 @@ paths:
       responses:
         '200':
           description: Pedido obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         '404':
           description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                pedidoNoEncontrado:
+                  summary: Pedido no encontrado
+                  value:
+                    status: error
+                    message: El pedido proporcionado no existe
+                    code: ORDER_NOT_FOUND
         '400':
           description: Error de validación de id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     put:
       tags: [Orders]
       summary: Actualizar un pedido por ID
@@ -243,6 +423,7 @@ paths:
       responses:
         '200':
           description: Pedido actualizado exitosamente
+          content
         '400':
           description: Error de validación de id
         '404':
@@ -270,7 +451,149 @@ paths:
         '500':
           description: Error interno del servidor
   /api/deliveries:
+    get:
+      tags: [Deliveries]
+      summary: Obtener todas las entregas
+      responses:
+        '200':
+          description: Entregas obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveriesResponse'
+        '500':
+          description: Error interno del servidor
+    post:
+      tags: [Deliveries]
+      summary: Crear una entrega
+      description: Requiere un pedido existente. El conductor es opcional.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryInput'
+      responses:
+        '200':
+          description: Entrega creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+        '400':
+          description: ID inválido o datos de entrega inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID del pedido o conductor inválido
+                  value:
+                    status: error
+                    message: ID inválido
+                    code: ID_ERROR
+                userNoDriver:
+                  summary: Usuario no es un conductor
+                  value:
+                    status: error
+                    message: Usuario no es un conductor
+                    code: NON_DRIVER_USER
+        '404':
+          description: Pedido o conductor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                pedidoNoEncontrado:
+                  summary: Pedido no encontrado
+                  value:
+                    status: error
+                    message: Orden no encontrada
+                conductorNoEncontrado:
+                  summary: Conductor no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
   /api/deliveries/{id}:
+    get:
+      tags: [Deliveries]
+      summary: Obtener una entrega por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la entrega
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entrega obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryReadResponse'
+        '400':
+          description: El ID proporcionado no es válido
+        '404':
+          description: Entrega no encontrada
+        '500':
+          description: Error interno del servidor
+    put:
+      tags: [Deliveries]
+      summary: Actualizar una entrega por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la entrega a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryUpdate'
+      responses:
+        '200':
+          description: Entrega actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+        '400':
+          description: El ID proporcionado no es válido
+        '404':
+          description: Entrega no encontrada
+        '500':
+          description: Error interno del servidor
+    delete:
+      tags: [Deliveries]
+      summary: Eliminar una entrega por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la entrega a eliminar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entrega eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+        '400':
+          description: El ID proporcionado no es válido
+        '404':
+          description: Entrega no encontrada
+        '500':
+          description: Error interno del servidor
 components:
   schemas:
     User:
@@ -418,7 +741,7 @@ components:
       description: Usuario poblado por las consultas de pedidos. Puede ser null si el usuario fue eliminado.
     Delivery:
       type: object
-      required: [_id, firstName, lastName, email, role]
+      required: [_id, order]
       properties:
         _id:
           type: string
@@ -428,6 +751,7 @@ components:
           example: 6af1797c5f3e9d65352dd830
         driver:
           type: string
+          nullable: true
           example: 6af1797c5f3e9d65352dd82f
         status:
           type: string
@@ -440,17 +764,148 @@ components:
         assignedAt:
           type: string
           format: date-time
+          nullable: true
           example: 2024-06-01T12:00:00Z
         deliveredAt:
           type: string
           format: date-time
+          nullable: true
           example: 2024-06-02T12:00:00Z
         canceledAt:
           type: string
           format: date-time
+          nullable: true
           example: 2024-06-03T12:00:00Z
       nullable: true
       description: Información de la entrega. Puede ser null si la entrega no ha sido asignada.
+    DeliveryInput:
+      type: object
+      required: [order]
+      properties:
+        order:
+          type: string
+          description: ID del pedido existente
+          example: 6af1797c5f3e9d65352dd830
+        driver:
+          type: string
+          nullable: true
+          description: ID opcional de un conductor existente
+          example: 6af1797c5f3e9d65352dd82f
+        status:
+          type: string
+          enum: [pending, assigned, in_transit, delivered, canceled]
+          default: pending
+          description: Al proporcionar un conductor, el servicio asigna el estado assigned.
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+    DeliveryUpdate:
+      type: object
+      properties:
+        order:
+          type: string
+          example: 6af1797c5f3e9d65352dd830
+        driver:
+          type: string
+          nullable: true
+          example: 6af1797c5f3e9d65352dd82f
+        status:
+          type: string
+          enum: [pending, assigned, in_transit, delivered, canceled]
+        priority:
+          type: string
+          enum: [low, normal, high]
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+        canceledAt:
+          type: string
+          format: date-time
+          nullable: true
+    DeliveryRead:
+      type: object
+      description: Entrega consultada con el pedido y el conductor poblados.
+      properties:
+        _id:
+          type: string
+          example: 6af1797c5f3e9d65352dd82f
+        order:
+          type: object
+          nullable: true
+          description: Pedido poblado; puede ser null si fue eliminado.
+          allOf:
+            - $ref: '#/components/schemas/Order'
+        driver:
+          type: object
+          nullable: true
+          description: Conductor poblado; puede ser null si no está asignado o fue eliminado.
+          properties:
+            _id:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+        status:
+          type: string
+          enum: [pending, assigned, in_transit, delivered, canceled]
+        priority:
+          type: string
+          enum: [low, normal, high]
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+        canceledAt:
+          type: string
+          format: date-time
+          nullable: true
+    DeliveryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        payload:
+          $ref: '#/components/schemas/Delivery'
+    DeliveryReadResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Entrega obtenida
+        payload:
+          $ref: '#/components/schemas/DeliveryRead'
+    DeliveriesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Entregas obtenidas
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryRead'
     OrderRead:
       type: object
       properties:
