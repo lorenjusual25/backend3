@@ -45,6 +45,9 @@ export const mockService = {
     },
     seed: async(params = {}) => {
         const { users = 0, orders = 0, deliveries = 0, stores = 0 } = params
+        for (const cant of [users, orders, deliveries, stores]) {
+            validateMockCant(cant)
+        }
         const result = {
             users:0,
             orders:0,

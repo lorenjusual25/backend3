@@ -20,7 +20,8 @@ export function errorHandler(err, req, res, next) {
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             status: "error",
-            message: err.message
+            message: err.message,
+            code: err.code || ERROR_CODES.INTERNAL_SERVER_ERROR
         })
     }
     if (res.headersSent) {
@@ -28,6 +29,7 @@ export function errorHandler(err, req, res, next) {
     }
     return res.status(500).json({
         status: "error",
-        message: "Error interno del servidor"
+        message: "Error interno del servidor",
+        code: ERROR_CODES.INTERNAL_SERVER_ERROR
     })
 }

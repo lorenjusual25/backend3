@@ -423,13 +423,49 @@ paths:
       responses:
         '200':
           description: Pedido actualizado exitosamente
-          content
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         '400':
           description: Error de validación de id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                pedidoNoEncontrado:
+                  summary: Pedido no encontrado
+                  value:
+                    status: error
+                    message: El pedido proporcionado no existe
+                    code: ORDER_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     delete:
       tags: [Orders]
       summary: Eliminar un pedido por ID
@@ -444,12 +480,49 @@ paths:
       responses:
         '200':
           description: Pedido eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         '404':
           description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                pedidoNoEncontrado:
+                  summary: Pedido no encontrado
+                  value:
+                    status: error
+                    message: El pedido proporcionado no existe
+                    code: ORDER_NOT_FOUND
         '400':
           description: Error de validación de id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
   /api/deliveries:
     get:
       tags: [Deliveries]
@@ -538,10 +611,43 @@ paths:
                 $ref: '#/components/schemas/DeliveryReadResponse'
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                entregaNoEncontrada:
+                  summary: Entrega no encontrada
+                  value:
+                    status: error
+                    message: La entrega proporcionada no existe
+                    code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     put:
       tags: [Deliveries]
       summary: Actualizar una entrega por ID
@@ -567,10 +673,43 @@ paths:
                 $ref: '#/components/schemas/DeliveryResponse'
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                entregaNoEncontrada:
+                  summary: Entrega no encontrada
+                  value:
+                    status: error
+                    message: La entrega proporcionada no existe
+                    code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     delete:
       tags: [Deliveries]
       summary: Eliminar una entrega por ID
@@ -590,12 +729,267 @@ paths:
                 $ref: '#/components/schemas/DeliveryResponse'
         '400':
           description: El ID proporcionado no es válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  summary: ID inválido
+                  value:
+                    status: error
+                    message: El ID proporcionado no es válido
+                    code: ID_ERROR
         '404':
           description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                entregaNoEncontrada:
+                  summary: Entrega no encontrada
+                  value:
+                    status: error
+                    message: La entrega proporcionada no existe
+                    code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
+  /api/mocks/getMockUsers:
+    get:
+      tags: [Mocks]
+      summary: Generar usuarios simulados
+      description: Genera usuarios de prueba sin guardarlos en MongoDB.
+      parameters:
+        - name: cant
+          in: query
+          required: false
+          description: Cantidad de usuarios a generar entre 1 y 100. Por defecto es 10
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Usuarios simulados generados exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MockUsersResponse'
+              examples:
+                usuariosGenerados:
+                  summary: Un usuario generado
+                  value:
+                    status: success
+                    message: Usuarios simulados obtenidos
+                    payload:
+                      - firstName: Ana
+                        lastName: Gomez
+                        email: ana.gomez.abc12@shipnow.test
+                        password: "coder123!"
+                        role: customer
+        '400':
+          description: Cantidad de usuarios inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                cantidadInvalida:
+                  summary: La cantidad no es un entero positivo
+                  value:
+                    status: error
+                    message: Cantidad de mocks inválida
+                    code: INVALID_MOCK_QUANTITY
+                cantidadExcedida:
+                  summary: La cantidad supera el máximo permitido
+                  value:
+                    status: error
+                    message: Se alcanzó el máximo de mocks
+                    code: MAX_MOCK_REACHED
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error inesperado
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
+  /api/mocks/seed:
+    post:
+      tags: [Mocks]
+      summary: Insertar datos simulados
+      description: Inserta usuarios, pedidos y entregas en MongoDB.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MockSeedInput'
+      responses:
+        '200':
+          description: Datos simulados insertados exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MockSeedResponse'
+              examples:
+                usuariosInsertados:
+                  summary: Se insertaron dos usuarios
+                  value:
+                    status: success
+                    message: Datos simulados insertados
+                    payload:
+                      users: 0
+                      orders: 0
+                      deliveries: 0
+                      stores: 0
+        '400':
+          description: Cantidad inválida o datos insuficientes para la generación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                cantidadInvalida:
+                  summary: Una cantidad positiva no es entera
+                  value:
+                    status: error
+                    message: Cantidad de mocks inválida
+                    code: INVALID_MOCK_QUANTITY
+                cantidadExcedida:
+                  summary: Una cantidad supera el máximo permitido
+                  value:
+                    status: error
+                    message: Se alcanzó el máximo de mocks
+                    code: MAX_MOCK_REACHED
+                clientesInsuficientes:
+                  summary: No hay clientes para generar pedidos
+                  value:
+                    status: error
+                    message: No hay suficientes clientes simulados
+                    code: MOCK_NOT_ENOUGH_CLIENTS
+                conductoresInsuficientes:
+                  summary: No hay conductores para generar entregas
+                  value:
+                    status: error
+                    message: No hay suficientes conductores simulados
+                    code: MOCK_NOT_ENOUGH_DRIVERS
+                pedidosInsuficientes:
+                  summary: No hay suficientes pedidos sin entrega
+                  value:
+                    status: error
+                    message: No hay suficientes órdenes simuladas sin entrega
+                    code: MOCK_NOT_ENOUGH_ORDERS
+                tiendasInsuficientes:
+                  summary: No hay suficientes dueños de tiendas
+                  value:
+                    status: error
+                    message: No hay suficientes dueños de tiendas simulados
+                    code: MOCK_NOT_ENOUGH_STORE_OWNERS
+        '500':
+          description: Error interno del servidor, por ejemplo durante la carga en MongoDB
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error inesperado
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
 components:
   schemas:
+    MockUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Ana
+        lastName:
+          type: string
+          example: Gomez
+        email:
+          type: string
+          format: email
+          example: ana.gomez.abc12@shipnow.test
+        password:
+          type: string
+          example: "coder123!"
+        role:
+          type: string
+          example: customer
+    MockUsersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Usuarios simulados obtenidos
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/MockUser'
+    MockSeedInput:
+      type: object
+      properties:
+        users:
+          type: integer
+          description: Cantidad de usuarios a insertar.
+          example: 0
+        orders:
+          type: integer
+          description: Cantidad de pedidos a insertar.
+          example: 0
+        deliveries:
+          type: integer
+          description: Cantidad de entregas a insertar.
+          example: 0
+        stores:
+          type: integer
+          description: Cantidad de tiendas a insertar.
+          example: 0
+    MockSeedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Datos simulados insertados
+        payload:
+          type: object
+          properties:
+            users:
+              type: integer
+            orders:
+              type: integer
+            deliveries:
+              type: integer
+            stores:
+              type: integer
     User:
       type: object
       required: [_id, firstName, lastName, email, role]
