@@ -37,7 +37,7 @@ del logger es solo para probar los niveles de log.
 ## Tests
 
 Los tests usan Mocha para ejecutarlos, Chai para las comprobaciones y Supertest
-para probar los endpoints. Se prueban Users, Orders, Mocks, Logger, Swagger y
+para probar los endpoints. Se prueban Users, Orders, Mocks, Logger, Swagger, Health y
 la respuesta de ruta inexistente.
 
 1. Instala las dependencias con `npm install`.
