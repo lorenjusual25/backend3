@@ -30,7 +30,7 @@ app.get('/api/logger-test',(req,res) => {
   logger.log('warning', 'Prueba de warning')
   logger.log('error', 'Prueba de error')
   logger.log('fatal', 'Prueba de fatal')
-  res.json({ status: 'ok', message: 'Logs de prueba generados' })
+  res.json({ status: 'success', message: 'Logs de prueba generados' })
 })
 app.use(notFoundRoute)
 app.use(errorHandler)
