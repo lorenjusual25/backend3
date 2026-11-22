@@ -316,18 +316,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderResponse'
         '400':
-          description: Error de validación
+          description: Datos inválidos en la solicitud
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
                 itemsInvalidos:
-                  summary: Items inválidos en la solicitud
+                  summary: Datos inválidos en la solicitud
                   value:
                     status: error
-                    message: La orden debe tener al menos un item
-                    code: ORDER_LENGTH_INVALID
+                    message: Datos invalidos
+                    code: VALIDATION_ERROR
         '404':
           description: Cliente no encontrado
           content:

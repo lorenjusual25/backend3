@@ -4,6 +4,7 @@ import { orderRepository } from "../repositories/order.repository.js";
 import { AppError } from "../utils/error.js"
 import { ERROR_CODES } from "../utils/errorDictionary.js";
 import { userRepository } from "../repositories/user.repository.js";
+import mongoose from "mongoose";
 export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
@@ -26,12 +27,16 @@ export const orderService = {
         return order
     },
     create: async (order) => {
+        if (typeof order.customer !== "string" || !mongoose.isObjectIdOrHexString(order.customer)
+            || typeof order.deliveryAddress !== "string" || !order.deliveryAddress.trim()) {
+            throw new AppError(ERROR_CODES.VALIDATION_ERROR);
+        }
         const customerId = await userRepository.findById(order.customer)
         if (!customerId) {
             throw new AppError(ERROR_CODES.USER_NOT_FOUND)
         }
         if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {
-            throw new AppError(ERROR_CODES.ORDER_LENGTH_INVALID)
+            throw new AppError(ERROR_CODES.VALIDATION_ERROR)
         }
         const itemsTotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
         const declaredValue = order.declaredValue || itemsTotal

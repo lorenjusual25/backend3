@@ -10,7 +10,7 @@ export const ERROR_CODES = {
     EMAIL_EXISTS: 'EMAIL_EXISTS',
     NON_DRIVER_USER: 'NON_DRIVER_USER',
     INVALID_USER: 'INVALID_USER',
-    ORDER_LENGTH_INVALID: 'ORDER_LENGTH_INVALID',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
     MOCK_NOT_ENOUGH_CLIENTS: 'MOCK_NOT_ENOUGH_CLIENTS',
     MOCK_NOT_ENOUGH_DRIVERS: 'MOCK_NOT_ENOUGH_DRIVERS',
     MOCK_NOT_ENOUGH_ORDERS: 'MOCK_NOT_ENOUGH_ORDERS',
@@ -65,9 +65,9 @@ export const ERROR_DICTIONARY = {
         statusCode: 400,
         message: 'El USUARIO no existe o no es válido'
     },
-    "ORDER_LENGTH_INVALID": {
+    "VALIDATION_ERROR": {
         statusCode: 400,
-        message: 'La orden debe tener al menos un item'
+        message: 'Datos invalidos'
     },
     "MOCK_NOT_ENOUGH_CLIENTS": {
         statusCode: 400,
