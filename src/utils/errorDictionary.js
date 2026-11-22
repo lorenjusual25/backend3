@@ -99,6 +99,6 @@ export const ERROR_DICTIONARY = {
     },
     "ID_ERROR": {
         statusCode: 400,
-        message: 'ID inválido'
+        message: 'ID invalido'
     }
 }
