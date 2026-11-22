@@ -19,6 +19,21 @@ Proyecto ShipNow con Node.js, Express y MongoDB
    npm run dev
    ```
 4. Probar: `GET http://localhost:8080/api/health`
+
+## Documentación con Swagger
+
+Con el servidor iniciado, entra a `http://localhost:8080/api/docs`. Si cambiaste
+el puerto en `.env`, usa ese puerto.
+
+Están documentados los módulos Users, Orders, Deliveries, Stores, Mocks y
+Logger. Para probar un endpoint, selecciónalo, presiona **Try it out**, completa
+los parámetros o el body si corresponde y presiona **Execute**.
+
+Para los endpoints que usan MongoDB necesitas una conexión configurada en
+`MONGO_URI` y, cuando corresponda, IDs de registros existentes. Las operaciones
+de creación, actualización y eliminación modifican la base de datos. El endpoint
+del logger es solo para probar los niveles de log.
+
 ## Por qué separar Service y Repository 
 Repository es la capa que se encarga de acceder a la base de datos o realizar consultas. Service es la capa que se encarga de la logica de negocio como pueden ser validaciones de campos y demas. Separar responsabilidades hace que el codigo sea mas facil de mantener y entender.
 
@@ -32,7 +47,7 @@ Genera usuarios simulados, pero no los guarda en MongoDB. El parámetro
 `cant` indica cuántos usuarios generar; si se omite, se generan 10.
 
 Los usuarios incluyen nombre, apellido, email, contraseña de prueba y un rol
-aleatorio de cliente o conductor.
+aleatorio.
 
 ### Cargar datos de prueba en MongoDB
 
@@ -62,11 +77,13 @@ La respuesta indica cuántos registros se insertaron:
 
 ```json
 {
-  "status": "ok",
+  "status": "success",
+  "message": "Datos simulados insertados",
   "payload": {
     "users": 20,
     "orders": 5,
-    "deliveries": 5
+    "deliveries": 5,
+    "stores": 0
   }
 }
 ```
@@ -83,13 +100,13 @@ La respuesta indica cuántos registros se insertaron:
 - Para crear pedidos debe existir al menos un cliente en la base de datos.
 - Para crear entregas debe existir al menos un conductor y suficientes pedidos
   sin entrega.
+- Para crear tiendas debe existir al menos un usuario con rol de tienda.
 - Los roles de los usuarios generados son aleatorios, por lo que una carga
   puede no incluir ambos roles. Si falta alguno, genera más usuarios.
 - Si ocurre un error durante la carga, los registros insertados antes del
   error no se revierten automáticamente.
 
-Los pedidos insertados por el seed no pasan por el servicio de pedidos; sus
-campos de importes conservan los valores por defecto del modelo.
+El seed calcula los importes de los pedidos antes de insertarlos.
 
 ## Manejo de errores y respuesta correcta
 
@@ -99,7 +116,8 @@ del dominio y el middleware los convierte en respuestas JSON:
 ```json
 {
   "status": "error",
-  "message": "Cantidad de mocks inválida"
+  "message": "Cantidad de mocks inválida",
+  "code": "INVALID_MOCK_QUANTITY"
 }
 ```
 
@@ -122,4 +140,4 @@ en `logs/error-<fecha>.log`, con una retencion de 14 días.
 En desarrollo la consola muestra desde `debug`; en producción el nivel se
 configura con `LOGGER_LEVEL` (por ejemplo, `info`). El filtro del archivo sigue
 siendo `error`.
-Git ignora `node_modules` y `.env`
+Git ignora `node_modules`, `.env` y `logs`

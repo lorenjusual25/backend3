@@ -22,7 +22,7 @@ const orderStatusByDelivery = {
     [DELIVERY_STATUS.CANCELED]: ORDER_STATUS.CANCELED
 }
 function validateMockCant(cant = DEFAULT_MOCK_ITEMS) {
-    if (!Number.isInteger(Number(cant)) || Number(cant) <= 0) {
+    if (!Number.isInteger(Number(cant)) || Number(cant) < 0) {
         throw new AppError(ERROR_CODES.INVALID_MOCK_QUANTITY)
     }
     if (Number(cant) > MAX_MOCK_ITEMS) {

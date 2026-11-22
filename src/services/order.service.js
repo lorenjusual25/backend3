@@ -3,6 +3,7 @@ import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { AppError } from "../utils/error.js"
 import { ERROR_CODES } from "../utils/errorDictionary.js";
+import { userRepository } from "../repositories/user.repository.js";
 export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
@@ -25,7 +26,8 @@ export const orderService = {
         return order
     },
     create: async (order) => {
-        if (!order.customer) {
+        const customerId = await userRepository.findById(order.customer)
+        if (!customerId) {
             throw new AppError(ERROR_CODES.USER_NOT_FOUND)
         }
         if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {

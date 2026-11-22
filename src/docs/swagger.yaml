@@ -9,6 +9,8 @@ tags:
     description: Gestion de tiendas
   - name: Mocks
     description: Gestion de datos simulados
+  - name: Logger
+    description: Gestion de registros de actividad
 paths: 
   /api/users:
     get:
@@ -307,7 +309,7 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderInput'
       responses:
-        '201':
+        '200':
           description: Pedido creado exitosamente
           content:
             application/json:
@@ -320,18 +322,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                usuarioNoEncontrado:
-                  summary: Usuario no encontrado en la solicitud
-                  value:
-                    status: error
-                    message: El usuario proporcionado no existe
-                    code: USER_NOT_FOUND
                 itemsInvalidos:
                   summary: Items inválidos en la solicitud
                   value:
                     status: error
-                    message: Los items proporcionados no son válidos
+                    message: La orden debe tener al menos un item
                     code: ORDER_LENGTH_INVALID
+        '404':
+          description: Cliente no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                clienteNoEncontrado:
+                  summary: Cliente no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '500':
           description: Error interno del servidor
           content:
@@ -375,7 +384,7 @@ paths:
                   summary: Pedido no encontrado
                   value:
                     status: error
-                    message: El pedido proporcionado no existe
+                    message: Orden no encontrada
                     code: ORDER_NOT_FOUND
         '400':
           description: ID invalido
@@ -451,7 +460,7 @@ paths:
                   summary: Pedido no encontrado
                   value:
                     status: error
-                    message: El pedido proporcionado no existe
+                    message: Orden no encontrada
                     code: ORDER_NOT_FOUND
         '500':
           description: Error interno del servidor
@@ -495,7 +504,7 @@ paths:
                   summary: Pedido no encontrado
                   value:
                     status: error
-                    message: El pedido proporcionado no existe
+                    message: Orden no encontrada
                     code: ORDER_NOT_FOUND
         '400':
           description: ID invalido
@@ -536,6 +545,17 @@ paths:
                 $ref: '#/components/schemas/DeliveriesResponse'
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
     post:
       tags: [Deliveries]
       summary: Crear una entrega
@@ -564,13 +584,13 @@ paths:
                   summary: ID del pedido o conductor inválido
                   value:
                     status: error
-                    message: ID inválido
+                    message: ID invalido
                     code: ID_ERROR
                 userNoDriver:
                   summary: Usuario no es un conductor
                   value:
                     status: error
-                    message: Usuario no es un conductor
+                    message: El usuario no es un conductor
                     code: NON_DRIVER_USER
         '404':
           description: Pedido o conductor no encontrado
@@ -584,13 +604,26 @@ paths:
                   value:
                     status: error
                     message: Orden no encontrada
+                    code: ORDER_NOT_FOUND
                 conductorNoEncontrado:
                   summary: Conductor no encontrado
                   value:
                     status: error
                     message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '500':
           description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
   /api/deliveries/{id}:
     get:
       tags: [Deliveries]
@@ -633,7 +666,7 @@ paths:
                   summary: Entrega no encontrada
                   value:
                     status: error
-                    message: La entrega proporcionada no existe
+                    message: Delivery no encontrado
                     code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
@@ -695,7 +728,7 @@ paths:
                   summary: Entrega no encontrada
                   value:
                     status: error
-                    message: La entrega proporcionada no existe
+                    message: Delivery no encontrado
                     code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
@@ -751,7 +784,7 @@ paths:
                   summary: Entrega no encontrada
                   value:
                     status: error
-                    message: La entrega proporcionada no existe
+                    message: Delivery no encontrado
                     code: DELIVERY_NOT_FOUND
         '500':
           description: Error interno del servidor
@@ -970,18 +1003,25 @@ paths:
                     status: error
                     message: Faltan campos requeridos
                     code: MISSING_REQUIRED_FIELDS
-                duenioFaltante:
-                  summary: Dueño faltante en la solicitud
-                  value:
-                    status: error
-                    message: Falta el campo del dueño
-                    code: USER_NOT_FOUND
                 userNoEsDuenio:
                   summary: Usuario no es dueño de la tienda
                   value:
                     status: error
-                    message: El usuario no es dueño de la tienda
+                    message: Rol inválido
                     code: INVALID_USER_ROLE
+        '404':
+          description: Dueño de la tienda no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                userNoEncontrado:
+                  summary: Usuario no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
         '500':
           description: Error interno del servidor
           content:
@@ -1025,7 +1065,7 @@ paths:
                   summary: Tienda no encontrada
                   value:
                     status: error
-                    message: La tienda no fue encontrada
+                    message: Store no encontrada
                     code: STORE_NOT_FOUND
         '400':
           description: ID invalido
@@ -1038,7 +1078,7 @@ paths:
                   summary: ID invalido
                   value:
                     status: error
-                    message: El ID proporcionado no es valido
+                    message: ID invalido
                     code: ID_ERROR
         '500':
           description: Error interno del servidor
@@ -1087,7 +1127,7 @@ paths:
                   summary: Tienda no encontrada
                   value:
                     status: error
-                    message: La tienda no fue encontrada
+                    message: Store no encontrada
                     code: STORE_NOT_FOUND
         '400':
           description: ID invalido
@@ -1143,7 +1183,7 @@ paths:
                   summary: Tienda no encontrada
                   value:
                     status: error
-                    message: La tienda no fue encontrada
+                    message: Store no encontrada
                     code: STORE_NOT_FOUND
         '400':
           description: ID invalido
@@ -1158,6 +1198,37 @@ paths:
                     status: error
                     message: ID invalido
                     code: ID_ERROR
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error inesperado
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
+  /api/logger-test:
+    get:
+      tags: [Logger]
+      summary: Probar el logger
+      responses:
+        '200':
+          description: Logger probado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Logger probado correctamente
         '500':
           description: Error interno del servidor
           content:
@@ -1420,9 +1491,9 @@ components:
             $ref: '#/components/schemas/User'
     OrderItem:
       type: object
-      required: [productId, quantity, price]
+      required: [name, quantity, price]
       properties:
-        productId:
+        name:
           type: string
           example: Caja mediana
         quantity:
