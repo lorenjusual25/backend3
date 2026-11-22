@@ -34,6 +34,27 @@ Para los endpoints que usan MongoDB necesitas una conexión configurada en
 de creación, actualización y eliminación modifican la base de datos. El endpoint
 del logger es solo para probar los niveles de log.
 
+## Tests
+
+Los tests usan Mocha para ejecutarlos, Chai para las comprobaciones y Supertest
+para probar los endpoints. Se prueban Users, Orders, Mocks, Logger, Swagger y
+la respuesta de ruta inexistente.
+
+1. Instala las dependencias con `npm install`.
+2. Crea un archivo `.env-test` en la raíz con la conexión a MongoDB:
+   ```env
+   MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/
+   NODE_ENV=test
+   ```
+3. Ejecuta los tests con `npm test`. No hace falta iniciar el servidor.
+
+Se necesita una base exclusiva para pruebas. Los tests se conectan a
+`shipnow_test` y **eliminan toda esa base al finalizar**, no solo los datos
+creados por un test. Asegúrate de que el cluster y la URI sean los correctos
+y de que `shipnow_test` no tenga datos que quieras conservar. Una variable
+`MONGO_URI` ya definida en el entorno puede tener prioridad sobre `.env-test`.
+No subas `.env-test` al repositorio porque puede contener credenciales.
+
 ## Por qué separar Service y Repository 
 Repository es la capa que se encarga de acceder a la base de datos o realizar consultas. Service es la capa que se encarga de la logica de negocio como pueden ser validaciones de campos y demas. Separar responsabilidades hace que el codigo sea mas facil de mantener y entender.
 
