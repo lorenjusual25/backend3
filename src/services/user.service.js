@@ -2,6 +2,8 @@ import { userRepository } from "../repositories/user.repository.js";
 import { USER_ROLES } from "../constants/user.constants.js";
 import { AppError } from "../utils/error.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
+import { DOCUMENT_TYPES } from "../constants/document.constants.js";
+import logger from "../config/logger.js";
 export const userService = {
     findAll: async () => {
         const users = await userRepository.findAll()
@@ -61,5 +63,29 @@ export const userService = {
             throw new AppError(ERROR_CODES.USER_NOT_FOUND)
         }
         return user
+    },
+    uploadDocument: async (id, file, type) => {
+        const user = await userRepository.findById(id)
+        if (!user) {
+            throw new AppError(ERROR_CODES.USER_NOT_FOUND)
+        }
+        if(!file) {
+            throw new AppError(ERROR_CODES.FILE_REQUIRED)
+        }
+        if(!Object.values(DOCUMENT_TYPES).includes(type)) {
+            throw new AppError(ERROR_CODES.INVALID_DOCUMENT_TYPE)
+        }
+        logger.info("El documento paso todas las validaciones")
+        const document = {
+            originalName: file.originalname,
+            fileName: file.filename,
+            path: file.path,
+            mimeType: file.mimetype,
+            size: file.size,
+            type
+        }
+        const documents = [...user.documents, document]
+        const updatedUser = await userRepository.update(id, { documents })
+        return updatedUser
     }
 }

@@ -1,6 +1,7 @@
 import { AppError } from "../utils/error.js";
 import logger from "../config/logger.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
+import multer from "multer";
 export function errorHandler(err, req, res, next) {
     const statusCode = err.name === "ValidationError"? 400: err.statusCode || 500
     const code = err.code || ERROR_CODES.INTERNAL_SERVER_ERROR
@@ -15,7 +16,20 @@ export function errorHandler(err, req, res, next) {
         return res.status(400).json({ status: "error", message: messages })
     }
     if (err.name === "CastError" && err.path === "_id") {
-        err = new AppError(ERROR_CODES.ID_ERROR);
+        err = new AppError(ERROR_CODES.ID_ERROR)
+    }
+    if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+            logger.error("Archivo demasiado grande")
+            err = new AppError(ERROR_CODES.FILE_TOO_LARGE)
+        }
+        else {
+            logger.error("Error de subida de archivo")
+            err = new AppError(ERROR_CODES.INVALID_UPLOAD)
+        }
+    }
+    if (["ENOENT", "EACCES","EPERM","ENOSPC"].includes(err.code)) {
+        err = new AppError(ERROR_CODES.UPLOAD_ERROR)
     }
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({

@@ -11,6 +11,8 @@ tags:
     description: Gestion de datos simulados
   - name: Logger
     description: Gestion de registros de actividad
+  - name: Uploads
+    description: Gestion de subida de archivos
 paths: 
   /api/users:
     get:
@@ -273,6 +275,109 @@ paths:
                     status: error
                     message: Error interno del servidor
                     code: INTERNAL_SERVER_ERROR
+  /api/users/{id}/documents:
+    post:
+      tags: [Uploads]
+      summary: Subir un documento para un usuario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadInput'
+      responses:
+        '200':
+          description: Documento subido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                status: success
+                message: Documento subido correctamente
+                payload:
+                  _id: "6af1795f5f3e9d65352dd81e"
+                  firstName: Ana
+                  lastName: Gomez
+                  email: ana@example.com
+                  role: customer
+                  documents:
+                    - originalName: documento.png
+                      fileName: archivo-generado.png
+                      path: uploads/documents/archivo-generado.png
+                      mimeType: image/png
+                      size: 512
+                      type: user_document
+        '400':
+          description: Datos inválidos en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                fileRequerido:
+                  summary: Archivo requerido
+                  value:
+                    status: error
+                    message: Archivo requerido
+                    code: FILE_REQUIRED
+                tipoDocumentoInvalido:
+                  summary: Tipo de documento inválido
+                  value:
+                    status: error
+                    message: Tipo de documento inválido
+                    code: INVALID_DOCUMENT_TYPE
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                usuarioNoEncontrado:
+                  summary: Usuario no encontrado
+                  value:
+                    status: error
+                    message: Usuario no encontrado
+                    code: USER_NOT_FOUND
+        '413':
+          description: Archivo demasiado grande
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                archivoDemasiadoGrande:
+                  summary: Archivo demasiado grande
+                  value:
+                    status: error
+                    message: Archivo demasiado grande
+                    code: FILE_TOO_LARGE
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
+                uploadError:
+                  summary: Error al subir el archivo
+                  value:
+                    status: error
+                    message: Error al subir el archivo
+                    code: UPLOAD_ERROR
   /api/orders:
     get:
       tags: [Orders]
@@ -532,6 +637,108 @@ paths:
                     status: error
                     message: Error interno del servidor
                     code: INTERNAL_SERVER_ERROR
+  /api/orders/{id}/proof:
+    post:
+      tags: [Uploads]
+      summary: Subir un comprobante para un pedido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del pedido al que se subirá el comprobante
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content: 
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadInput'
+      responses:
+        '200':
+          description: Documento subido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              example:
+                status: success
+                message: Documento subido correctamente
+                payload:
+                  _id: "6af1797c5f3e9d65352dd830"
+                  customer: "6af1795f5f3e9d65352dd81e"
+                  deliveryAddress: Calle 123
+                  proofs:
+                    - originalName: comprobante.png
+                      fileName: archivo-generado.png
+                      path: uploads/documents/archivo-generado.png
+                      mimeType: image/png
+                      size: 512
+                      type: order_proof
+        '400':
+          description: Datos inválidos en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                fileRequerido:
+                  summary: Archivo requerido
+                  value:
+                    status: error
+                    message: Archivo requerido
+                    code: FILE_REQUIRED
+                tipoDocumentoInvalido:
+                  summary: Tipo de documento inválido
+                  value:
+                    status: error
+                    message: Tipo de documento inválido
+                    code: INVALID_DOCUMENT_TYPE
+        '404':
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                orderNotFound:
+                  summary: Pedido no encontrado
+                  value:
+                    status: error
+                    message: Pedido no encontrado
+                    code: ORDER_NOT_FOUND
+        '413':
+          description: Archivo demasiado grande
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                fileTooLarge:
+                  summary: Archivo demasiado grande
+                  value:
+                    status: error
+                    message: Archivo demasiado grande
+                    code: FILE_TOO_LARGE
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
+                uploadError:
+                  summary: Error al subir el archivo
+                  value:
+                    status: error
+                    message: Error al subir el archivo
+                    code: UPLOAD_ERROR
   /api/deliveries:
     get:
       tags: [Deliveries]
@@ -1414,7 +1621,8 @@ components:
           example: customer
         documents:
           type: array
-          items: {}
+          items:
+            $ref: '#/components/schemas/UploadInfo'
           example: []
     UserInput:
       type: object
@@ -1809,6 +2017,10 @@ components:
           type: number
         declaredValue:
           type: number
+        proofs:
+          type: array
+          items:
+            $ref: '#/components/schemas/UploadInfo'
     OrderResponse:
       type: object
       properties:
@@ -1852,3 +2064,33 @@ components:
             - type: array
               items:
                 type: string
+    UploadInfo:
+      type: object
+      required: [originalName,fileName,path,mimeType,size,type]
+      properties:
+        originalName:
+          type: string
+        fileName:
+          type: string
+        path:
+          type: string
+        mimeType:
+          type: string
+        size:
+          type: number
+        type:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+    UploadInput:
+      type: object
+      required: [document, type]
+      properties:
+        document:
+          type: string
+          format: binary
+          description: Archivo PNG, maximo 1MB
+        type:
+          type: string
+          enum: [user_document, order_proof]

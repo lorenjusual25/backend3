@@ -1,5 +1,7 @@
 import { userService } from "../services/user.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { unlink } from "node:fs/promises";
+import logger from "../config/logger.js";
 export async function findAllUsers (req,res,next) {
     try {
         const users = await userService.findAll()
@@ -40,6 +42,22 @@ export async function deleteUser (req, res,next) {
         const user = await userService.delete(req.params.id)
         successResponse(res, {message: "Usuario eliminado", payload: user})
     } catch (err) {
+        next(err)
+    }
+}
+export async function uploadDocument (req,res,next) {
+    try {
+        const id = req.params.id
+        const type = req.body.type
+        const file = req.file
+        const user = await userService.uploadDocument(id, file, type)
+        logger.info("Documento subido correctamente")
+        successResponse(res, {message: "Documento subido correctamente",payload: user})
+    }
+    catch(err) {
+        if (req.file) {
+            await unlink(req.file.path)
+        }
         next(err)
     }
 }

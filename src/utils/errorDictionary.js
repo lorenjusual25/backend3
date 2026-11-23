@@ -18,7 +18,13 @@ export const ERROR_CODES = {
     MAX_MOCK_REACHED: 'MAX_MOCK_REACHED',
     MOCK_NOT_ENOUGH_STORE_OWNERS: 'MOCK_NOT_ENOUGH_STORE_OWNERS',
     STORE_NOT_FOUND: 'STORE_NOT_FOUND',
-    ID_ERROR: 'ID_ERROR'
+    ID_ERROR: 'ID_ERROR',
+    FILE_REQUIRED: 'FILE_REQUIRED',
+    INVALID_DOCUMENT_TYPE: 'INVALID_DOCUMENT_TYPE',
+    INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
+    FILE_TOO_LARGE: 'FILE_TOO_LARGE',
+    INVALID_UPLOAD: 'INVALID_UPLOAD',
+    UPLOAD_ERROR: 'UPLOAD_ERROR'
 }
 export const ERROR_DICTIONARY = {
     "INTERNAL_SERVER_ERROR": {
@@ -100,5 +106,29 @@ export const ERROR_DICTIONARY = {
     "ID_ERROR": {
         statusCode: 400,
         message: 'ID invalido'
+    },
+    "FILE_REQUIRED": {
+        statusCode: 400,
+        message: 'Archivo requerido'
+    },
+    "INVALID_DOCUMENT_TYPE": {
+        statusCode: 400,
+        message: 'Tipo de documento inválido'
+    },
+    "INVALID_FILE_TYPE": {
+        statusCode: 400,
+        message: 'Solo se permiten ciertos tipos de archivo'
+    },
+    "FILE_TOO_LARGE": {
+        statusCode: 413,
+        message: 'Archivo demasiado grande'
+    },
+    "INVALID_UPLOAD": {
+        statusCode: 400,
+        message: 'Campo de archivo o cantidad no permitidos'
+    },
+    "UPLOAD_ERROR": {
+        statusCode: 500,
+        message: 'Error al subir el archivo'
     }
 }

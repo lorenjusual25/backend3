@@ -1,5 +1,7 @@
 import { orderService } from "../services/order.service.js"
 import { successResponse } from "../utils/apiResponse.js";
+import { unlink } from "node:fs/promises"
+import logger from "../config/logger.js";
 export async function findAllOrders(req, res, next) {
     try {
         const orders = await orderService.findAll()
@@ -37,6 +39,18 @@ export async function deleteOrder(req, res, next) {
         const order = await orderService.delete(req.params.id)
         successResponse(res, {message: "Orden eliminada", payload: order})
     } catch (error) {
+        next(error)
+    }
+}
+export async function addProof(req, res, next) {
+    try {
+        const order = await orderService.addProof(req.params.id, req.file, req.body.type)
+        logger.info("Comprobante agregado correctamente")
+        successResponse(res, {message: "Documento subido correctamente", payload: order})
+    } catch (error) {
+        if (req.file) {
+            await unlink(req.file.path)
+        }
         next(error)
     }
 }

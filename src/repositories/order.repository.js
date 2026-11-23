@@ -20,5 +20,12 @@ export const orderRepository = {
     },
     insertMany: (orders) => {
         return Order.insertMany(orders)
+    },
+    addProof: (id, proof) => {
+        return Order.findByIdAndUpdate(
+            id,
+            { $push: { proofs: proof } },
+            { new: true }
+        )
     }
 }

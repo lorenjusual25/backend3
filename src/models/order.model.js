@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { ORDER_STATUS } from "../constants/order.constants.js";
 import { DELIVERY_PRIORITY } from "../constants/delivery.constants.js";
+import { documentSchema } from "./user.model.js";
 const orderItemSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -63,6 +64,10 @@ const orderSchema = new mongoose.Schema({
     declaredValue: {
         type: Number,
         default: 0
+    },
+    proofs: {
+        type:[documentSchema],
+        default: []
     }
 })
 const Order = mongoose.model("Order",orderSchema)

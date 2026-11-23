@@ -5,6 +5,7 @@ import { AppError } from "../utils/error.js"
 import { ERROR_CODES } from "../utils/errorDictionary.js";
 import { userRepository } from "../repositories/user.repository.js";
 import mongoose from "mongoose";
+import { DOCUMENT_TYPES } from "../constants/document.constants.js";
 export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
@@ -71,5 +72,32 @@ export const orderService = {
             throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
         }
         return order
+    },
+    addProof: async (id, doc, type) => {
+        const order = await orderRepository.findById(id)
+        if (!order) {
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
+        }
+        if (!doc) {
+            throw new AppError(ERROR_CODES.FILE_REQUIRED)
+        }
+        if (!Object.values(DOCUMENT_TYPES).includes(type)) {
+            throw new AppError(ERROR_CODES.INVALID_DOCUMENT_TYPE)
+        }
+        logger.info("El comprobante paso todas las validaciones")
+        const proof = {
+            originalName: doc.originalname,
+            fileName: doc.filename,
+            path: doc.path,
+            mimeType: doc.mimetype,
+            size: doc.size,
+            type
+        }
+        const proofs = [...order.proofs || [], proof]
+        const updatedOrder = await orderRepository.update(id, { proofs })
+        if (!updatedOrder) {
+            throw new AppError(ERROR_CODES.ORDER_NOT_FOUND)
+        }
+        return updatedOrder
     }
 }
