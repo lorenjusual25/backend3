@@ -333,6 +333,18 @@ paths:
                     status: error
                     message: Tipo de documento inválido
                     code: INVALID_DOCUMENT_TYPE
+                tipoArchivoInvalido:
+                  summary: Tipo de archivo inválido
+                  value:
+                    status: error
+                    message: Tipo de archivo inválido
+                    code: INVALID_FILE_TYPE
+                uploadInvalido:
+                  summary: Campo de archivo o cantidad no permitidos
+                  value:
+                    status: error
+                    message: Campo de archivo o cantidad no permitidos
+                    code: INVALID_UPLOAD
         '404':
           description: Usuario no encontrado
           content:
@@ -694,18 +706,30 @@ paths:
                     status: error
                     message: Tipo de documento inválido
                     code: INVALID_DOCUMENT_TYPE
+                tipoArchivoInvalido:
+                  summary: Tipo de archivo inválido
+                  value:
+                    status: error
+                    message: Tipo de archivo inválido
+                    code: INVALID_FILE_TYPE
+                uploadInvalido:
+                  summary: Campo de archivo o cantidad no permitidos
+                  value:
+                    status: error
+                    message: Campo de archivo o cantidad no permitidos
+                    code: INVALID_UPLOAD
         '404':
-          description: Pedido no encontrado
+          description: Orden no encontrada
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
                 orderNotFound:
-                  summary: Pedido no encontrado
+                  summary: Orden no encontrada
                   value:
                     status: error
-                    message: Pedido no encontrado
+                    message: Orden no encontrada
                     code: ORDER_NOT_FOUND
         '413':
           description: Archivo demasiado grande
