@@ -7,12 +7,15 @@ Proyecto ShipNow con Node.js, Express y MongoDB
    cd backend3
    npm install
    ```
-2. Crear un archivo `.env` en la raíz (junto a `package.json`):
+2. Crear un archivo `.env.development` en la raíz (junto a `package.json`).
+   Usa `.env.example` como plantilla:
    ```env
    PORT=8080
    NODE_ENV=development
    MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<base>
    JWT_SECRET=una_clave_secreta
+   LOGGER_LEVEL=info
+   CLIENT_URL=
    ```
 3. Iniciar el servidor:
    ```bash
@@ -46,7 +49,7 @@ la respuesta de ruta inexistente.
    MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/
    NODE_ENV=test
    ```
-3. Ejecuta los tests con `npm test`. No hace falta iniciar el servidor.
+3. Ejecuta los tests con `npm run test`. No hace falta iniciar el servidor.
 
 Se necesita una base exclusiva para pruebas. Los tests se conectan a
 `shipnow_test` y **eliminan toda esa base al finalizar**, no solo los datos
@@ -161,4 +164,65 @@ en `logs/error-<fecha>.log`, con una retencion de 14 días.
 En desarrollo la consola muestra desde `debug`; en producción el nivel se
 configura con `LOGGER_LEVEL` (por ejemplo, `info`). El filtro del archivo sigue
 siendo `error`.
+
+## Producción y Docker
+
+### Variables de entorno
+
+| Variable | Uso |
+|---|---|
+| `PORT` | Puerto de la API (por defecto `8080`) |
+| `NODE_ENV` | `development`, `test` o `production` |
+| `MONGO_URI` | Conexión a MongoDB (obligatoria) |
+| `JWT_SECRET` | Secreto para JWT |
+| `LOGGER_LEVEL` | Nivel de logs en producción (por ejemplo `info`) |
+| `CLIENT_URL` | Origen permitido por CORS (si se omite, acepta cualquiera) |
+
+La app carga `.env.development`, `.env.production` o `.env-test` según `NODE_ENV`.
+`.env.example` es la plantilla, sin valores reales.
+
+### Cómo correr la API, los tests y Swagger
+
+- **Local:** `npm install` y `npm run dev`.
+- **Tests:** `npm run test` (usa `.env-test` y elimina la base `shipnow_test`;
+  ver la sección Tests).
+- **Swagger:** `http://localhost:8080/api/docs` (solo fuera de producción).
+
+### Docker
+
+Construir la imagen:
+
+```bash
+docker build -t shipnow .
+```
+
+Ejecutar el contenedor pasando las variables con un archivo externo:
+
+```bash
+docker run --rm -p 8080:8080 --env-file .env.production shipnow
+```
+
+La API usa el puerto **8080**. Si cambias `PORT`, ajusta también `-p`.
+Para probarla: `GET http://localhost:8080/api/health` y, por ejemplo,
+`GET http://localhost:8080/api/orders`.
+
+### Archivos que no se suben al repositorio ni a la imagen
+
+`node_modules`, `.env`, `.env-test`, `.env.development`, `.env.production`,
+`logs` y `uploads`. La imagen tampoco incluye `.git` (`.dockerignore`).
+
+### Logs y uploads
+
+- Los logs `error` y `fatal` se guardan en `logs/` con retención de 14 días.
+- Los archivos subidos se guardan en `uploads/` (PNG, máximo 1 MB). Dentro de un
+  contenedor se pierden al borrarlo, salvo que montes un volumen; no se usan como
+  almacenamiento permanente.
+
+### Endpoints internos en producción
+
+Con `NODE_ENV=production` **no se exponen** `/api/mocks`, `/api/logger-test` ni
+`/api/docs` (Swagger): responden 404. Sirven solo para desarrollo y pruebas;
+`seed` modifica la base de datos. Para probar Swagger en Docker usa
+`NODE_ENV=development`. `/api/health` y los endpoints principales siguen disponibles.
+
 Git ignora `node_modules`, `.env` y `logs`

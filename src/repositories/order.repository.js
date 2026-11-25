@@ -13,7 +13,7 @@ export const orderRepository = {
         return Order.find({delivery:null}).limit(limit)
     },
     update:(id, updates) => {
-        return Order.findByIdAndUpdate(id, updates, { new: true })
+        return Order.findByIdAndUpdate(id, updates, { new: true, runValidators: true })
     },
     delete:  (id) => {
         return Order.findByIdAndDelete(id)
@@ -27,5 +27,12 @@ export const orderRepository = {
             { $push: { proofs: proof } },
             { new: true }
         )
+    },
+    findPaginate: async ({skip, filter = {}, limit = 10}) => {
+        return Order.find(filter)
+        .populate('customer', "firstName lastName")
+        .populate('delivery', "firstName lastName")
+        .skip(skip)
+        .limit(limit)
     }
 }

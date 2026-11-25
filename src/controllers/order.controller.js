@@ -2,10 +2,12 @@ import { orderService } from "../services/order.service.js"
 import { successResponse } from "../utils/apiResponse.js";
 import { unlink } from "node:fs/promises"
 import logger from "../config/logger.js";
+import { parsePagination } from "../utils/pagination.js";
 export async function findAllOrders(req, res, next) {
     try {
-        const orders = await orderService.findAll()
-        successResponse(res, {message: "Ordenes obtenidas", payload: orders})
+        const { page, limit, offset } = parsePagination(req.query)
+        const orders = await orderService.findAll({skip: offset, limit, status: req.query.status})
+        successResponse(res, {message: "Ordenes obtenidas", page, limit, payload: orders})
     } catch (error) {
         next(error)
     }

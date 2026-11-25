@@ -6,6 +6,7 @@ import { ERROR_CODES } from "../utils/errorDictionary.js";
 import { userRepository } from "../repositories/user.repository.js";
 import mongoose from "mongoose";
 import { DOCUMENT_TYPES } from "../constants/document.constants.js";
+import { ORDER_STATUS } from "../constants/order.constants.js";
 export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORITY.NORMAL) {
     switch (priority) {
         case DELIVERY_PRIORITY.LOW:
@@ -17,8 +18,12 @@ export function calculateShippingCost(declaredValue, priority = DELIVERY_PRIORIT
     }
 }
 export const orderService = {
-    findAll: async () => {
-        return await orderRepository.findAll()
+    findAll: async ({skip, limit, status}) => {
+        if (status && !Object.values(ORDER_STATUS).includes(status)) {
+            throw new AppError(ERROR_CODES.INVALID_ORDER_STATUS)
+        }
+        const filter = status ? { status } : {}
+        return await orderRepository.findPaginate({ skip, limit, filter })
     },
     findById: async (id) => {
         const order = await orderRepository.findById(id)
@@ -58,6 +63,11 @@ export const orderService = {
             updates.declaredValue = declaredValue
             updates.shippingCost = shippingCost
             updates.total = declaredValue + shippingCost
+        }
+        if (updates.status) {
+            if (!Object.values(ORDER_STATUS).includes(updates.status)) {
+                throw new AppError(ERROR_CODES.INVALID_ORDER_STATUS)
+            }
         }
         const order = await orderRepository.update(id, updates)
         if (!order) {

@@ -1,9 +1,15 @@
 import { deliveryService } from "../services/delivery.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { parsePagination } from "../utils/pagination.js";
 export async function findAllDeliveries(req, res, next) {
     try {
-        const deliveries = await deliveryService.findAll()
-        successResponse(res, {message: "Entregas obtenidas", payload: deliveries})
+        const { page, limit, offset } = parsePagination(req.query)
+        const filter = {}
+        if (req.query.status) {
+            filter.status = req.query.status
+        }
+        const deliveries = await deliveryService.findAll({skip: offset, limit, filter})
+        successResponse(res, {message: "Entregas obtenidas", page, limit, payload: deliveries})
     } catch (error) {
         next(error)
     }

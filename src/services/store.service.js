@@ -3,8 +3,8 @@ import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../utils/error.js';
 import { ERROR_CODES } from '../utils/errorDictionary.js';
 export const storeService = {
-    findAll: async () => {
-        return await storeRepository.findAll()
+    findAll: async ({skip, filter = {}, limit = 10}) => {
+        return await storeRepository.findPaginate({skip, filter, limit})
     },
     findById: async (id) => {
         const store = await storeRepository.findById(id)

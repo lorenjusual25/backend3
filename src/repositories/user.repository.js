@@ -23,5 +23,11 @@ export const userRepository = {
     },
     insertMany: (users) => {
         return User.insertMany(users)
+    },
+    findPaginate: async ({skip, filter = {}, limit = 10}) => {
+        return User.find(filter)
+        .populate("firstName lastName email")
+        .skip(skip)
+        .limit(limit)
     }
 }

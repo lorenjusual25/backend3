@@ -5,8 +5,8 @@ import { ERROR_CODES } from "../utils/errorDictionary.js";
 import { DOCUMENT_TYPES } from "../constants/document.constants.js";
 import logger from "../config/logger.js";
 export const userService = {
-    findAll: async () => {
-        const users = await userRepository.findAll()
+    findAll: async ({skip, filter = {}, limit = 10}) => {
+        const users = await userRepository.findPaginate({skip, filter, limit})
         return users
     },
     findById: async (id) => {
@@ -51,6 +51,9 @@ export const userService = {
         })
     },
     update: async (id, updates) => {
+        if (updates.role && !Object.values(USER_ROLES).includes(updates.role)) {
+            throw new AppError(ERROR_CODES.INVALID_USER_ROLE)
+        }
         const user = await userRepository.update(id, updates)
         if (!user) {
             throw new AppError(ERROR_CODES.USER_NOT_FOUND)

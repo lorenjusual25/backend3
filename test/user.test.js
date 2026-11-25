@@ -3,6 +3,12 @@ import request from "supertest";
 import app from "../src/app.js";
 import { userFixture } from "./helpers/userFixture.js";
 describe("User API", () => {
+    it("deberia recibir el listado de usuarios",async() => {
+        const res = await request(app).get("/api/users")
+        expect(res.status).to.equal(200)
+        expect(res.body.status).to.equal("success")
+        expect(res.body.payload).to.be.an("array")
+    })
     it("deberia de crear un usuario", async() => {
         const user = userFixture()
         const res = await request(app).post("/api/users").send(user)
@@ -38,7 +44,20 @@ describe("User API", () => {
         expect(res.body.payload.lastName).to.equal(user.lastName)
         expect(res.body.payload.email).to.equal(user.email)
     })
-    it("responde 400 si faltan campos obligatorios", async() => {
+    it("responde 400 si el rol es invalido", async() => {
+        const user = userFixture()
+        const created = await request(app).post("/api/users").send(user)
+        expect(created.status).to.equal(200)
+        const id = created.body.payload._id
+        const res = await request(app).put(`/api/users/${id}`).send({
+            role: "rol_invalido"
+        })
+        expect(res.status).to.equal(400)
+        expect(res.body.status).equal("error")
+        expect(res.body.message).equal("Rol inválido")
+        expect(res.body.code).to.equal("INVALID_USER_ROLE")
+    })
+    it("responde 400 si faltan campos obligatorios",  async() => {
         const res = await request(app).post("/api/users").send({
             firstName: "nombre",
             lastName: "apellido"

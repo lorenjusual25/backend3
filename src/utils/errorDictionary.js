@@ -10,6 +10,7 @@ export const ERROR_CODES = {
     EMAIL_EXISTS: 'EMAIL_EXISTS',
     NON_DRIVER_USER: 'NON_DRIVER_USER',
     INVALID_USER: 'INVALID_USER',
+    INVALID_ORDER_STATUS: 'INVALID_ORDER_STATUS',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
     MOCK_NOT_ENOUGH_CLIENTS: 'MOCK_NOT_ENOUGH_CLIENTS',
     MOCK_NOT_ENOUGH_DRIVERS: 'MOCK_NOT_ENOUGH_DRIVERS',
@@ -54,6 +55,10 @@ export const ERROR_DICTIONARY = {
     "INVALID_USER_ROLE": {
         statusCode: 400,
         message: 'Rol inválido'
+    },
+    "INVALID_ORDER_STATUS": {
+        statusCode: 400,
+        message: 'Estado de orden inválido'
     },
     "MISSING_REQUIRED_FIELDS": {
         statusCode: 400,

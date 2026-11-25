@@ -17,5 +17,12 @@ export const deliveryRepository = {
     },
     insertMany: (deliveries) => {
         return Delivery.insertMany(deliveries)
+    },
+    findPaginate: async ({skip, filter = {}, limit = 10}) => {
+        return Delivery.find(filter)
+        .populate('order', "status")
+        .populate('driver', "firstName lastName email")
+        .skip(skip)
+        .limit(limit)
     }
 }

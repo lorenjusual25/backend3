@@ -2,10 +2,16 @@ import { userService } from "../services/user.service.js";
 import { successResponse } from "../utils/apiResponse.js";
 import { unlink } from "node:fs/promises";
 import logger from "../config/logger.js";
+import { parsePagination } from "../utils/pagination.js";
 export async function findAllUsers (req,res,next) {
     try {
-        const users = await userService.findAll()
-        successResponse(res, {message: "Lista de usuarios", payload: users})
+        const { page, limit, offset } = parsePagination(req.query)
+        const filter = {}
+        if (req.query.status) {
+            filter.status = req.query.status
+        }
+        const users = await userService.findAll({skip: offset, limit, filter})
+        successResponse(res, {message: "Usuarios obtenidos", page, limit, payload: users})
     }
     catch (err) {
         next(err)

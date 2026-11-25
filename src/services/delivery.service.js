@@ -6,8 +6,8 @@ import { USER_ROLES } from "../constants/user.constants.js";
 import { DELIVERY_STATUS } from "../constants/delivery.constants.js";
 import { ERROR_CODES } from "../utils/errorDictionary.js";
 export const deliveryService = {
-    findAll: async () => {
-        return await deliveryRepository.findAll()
+    findAll: async ({skip, filter = {}, limit = 10}) => {
+        return await deliveryRepository.findPaginate({skip, filter, limit})
     },
     findById: async (id) => {
         const delivery = await deliveryRepository.findById(id)

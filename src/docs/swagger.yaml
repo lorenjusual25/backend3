@@ -13,7 +13,34 @@ tags:
     description: Gestion de registros de actividad
   - name: Uploads
     description: Gestion de subida de archivos
+  - name: Health
+    description: Gestion de estado de salud de la API
 paths: 
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Obtener el estado de salud de la API
+      description: Verificar si la API está funcionando correctamente
+      responses:
+        '200':
+          description: Estado de salud obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                errorInterno:
+                  summary: Error interno del servidor
+                  value:
+                    status: error
+                    message: Error interno del servidor
+                    code: INTERNAL_SERVER_ERROR
   /api/users:
     get:
       tags: [Users]
@@ -193,6 +220,12 @@ paths:
                     status: error
                     message: ID invalido
                     code: ID_ERROR
+                rolInvalido:
+                  summary: Rol inválido
+                  value:
+                    status: error
+                    message: Rol inválido
+                    code: INVALID_USER_ROLE
         '404':
           description: Usuario no encontrado
           content:
@@ -566,6 +599,12 @@ paths:
                     status: error
                     message: ID invalido
                     code: ID_ERROR
+                estadoInvalido:
+                  summary: Estado de orden inválido
+                  value:
+                    status: error
+                    message: Estado de orden inválido
+                    code: INVALID_ORDER_STATUS
         '404':
           description: Pedido no encontrado
           content:
@@ -2084,10 +2123,13 @@ components:
         message:
           oneOf:
             - type: string
-              example: Pedido no encontrado
+              example: Orden no encontrada
             - type: array
               items:
                 type: string
+        code:
+          type: integer
+          example: 404
     UploadInfo:
       type: object
       required: [originalName,fileName,path,mimeType,size,type]
@@ -2118,3 +2160,12 @@ components:
         type:
           type: string
           enum: [user_document, order_proof]
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time

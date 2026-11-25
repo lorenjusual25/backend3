@@ -3,6 +3,12 @@ import request from "supertest";
 import app from "../src/app.js";
 import { orderFixture } from "./helpers/orderFixture.js";
 describe("Order API", () => {
+    it("deberia recibir el listado de ordenes",async() => {
+        const res = await request(app).get("/api/orders")
+        expect(res.status).to.equal(200)
+        expect(res.body.status).to.equal("success")
+        expect(res.body.payload).to.be.an("array")
+    })
     it("deberia crear un order", async () => {
         const order = await orderFixture()
         const res = await request(app).post("/api/orders").send(order)
@@ -48,6 +54,19 @@ describe("Order API", () => {
         expect(res.status).to.equal(200)
         expect(res.body.payload._id).to.equal(id)
         expect(res.body.payload.deliveryAddress).to.equal("Calle 456")
+    })
+    it("responde 400 si el status es invalido", async () => {
+        const order = await orderFixture()
+        const created = await request(app).post("/api/orders").send(order)
+        expect(created.status).to.equal(200)
+        const id = created.body.payload._id
+        const res = await request(app).put(`/api/orders/${id}`).send({
+            status: "status invalido"
+        })
+        expect(res.status).to.equal(400)
+        expect(res.body.status).to.equal("error")
+        expect(res.body.message).to.equal("Status invalido")
+        expect(res.body.code).to.equal("INVALID_ORDER_STATUS")
     })
     it("responde 400 si el id del pedido es invalido", async () => {
         const idInvalido = "abc123"

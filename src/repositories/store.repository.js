@@ -21,4 +21,10 @@ export const storeRepository = {
     delete: async (id) => {
         return StoreModel.findByIdAndDelete(id)
     },
+    findPaginate: async ({skip, filter = {}, limit = 10}) => {
+        return StoreModel.find(filter)
+        .populate('owner', "firstName lastName")
+        .skip(skip)
+        .limit(limit)
+    }
 }
